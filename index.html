@@ -133,7 +133,7 @@
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-pie-chart"><path d="M21.21 15.89A10 10 0 1 1 8 2.83"/><path d="M22 12A10 10 0 0 0 12 2v10z"/></svg>
                     </button>
                     <button id="progress-matrix-btn" class="animated-button p-4 bg-white text-slate-600 rounded-xl" title="Tiến độ học tập tổng quát">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
                     </button>
                 </div>
             </div>
@@ -186,11 +186,12 @@
                 <h3 id="progress-modal-title" class="text-xl font-bold text-slate-800">Tiến độ học tập</h3>
                 <button id="close-progress-matrix-btn" class="text-slate-500 hover:text-slate-800 text-3xl leading-none">&times;</button>
             </div>
-            <div id="progress-stats" class="grid grid-cols-2 md:grid-cols-4 items-center justify-center gap-4 text-xs mb-4">
+            <div id="progress-stats" class="grid grid-cols-2 md:grid-cols-5 items-center justify-center gap-4 text-xs mb-4">
                 <div class="flex items-center gap-1.5"><div class="w-3 h-3 rounded-sm bg-slate-300"></div><span>Chưa học (<span id="stats-unstudied-count">0</span> - <span id="stats-unstudied-percent">0%</span>)</span></div>
                 <div class="flex items-center gap-1.5"><div class="w-3 h-3 rounded-sm bg-red-500"></div><span>Khó (<span id="stats-hard-count">0</span> - <span id="stats-hard-percent">0%</span>)</span></div>
                 <div class="flex items-center gap-1.5"><div class="w-3 h-3 rounded-sm bg-blue-500"></div><span>Bình thường (<span id="stats-good-count">0</span> - <span id="stats-good-percent">0%</span>)</span></div>
                 <div class="flex items-center gap-1.5"><div class="w-3 h-3 rounded-sm bg-green-500"></div><span>Dễ (<span id="stats-easy-count">0</span> - <span id="stats-easy-percent">0%</span>)</span></div>
+                <div class="flex items-center gap-1.5"><div class="w-3 h-3 rounded-sm bg-purple-500"></div><span>Đã biết (<span id="stats-known-count">0</span> - <span id="stats-known-percent">0%</span>)</span></div>
             </div>
             <div id="progress-grid-container" class="progress-grid overflow-y-auto p-2 bg-slate-100 rounded-lg">
             </div>
@@ -280,6 +281,8 @@
             statsGoodPercent: document.getElementById('stats-good-percent'),
             statsEasyCount: document.getElementById('stats-easy-count'),
             statsEasyPercent: document.getElementById('stats-easy-percent'),
+            statsKnownCount: document.getElementById('stats-known-count'),
+            statsKnownPercent: document.getElementById('stats-known-percent'),
         };
         
         const speakerIconSVG = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-volume-2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/></svg>`;
@@ -321,7 +324,6 @@
             saveSrsProgress();
         }
 
-        // *** NEW: Function to mark a word as known ***
         function markAsKnown(wordKey) {
             const farFutureDate = new Date();
             farFutureDate.setFullYear(farFutureDate.getFullYear() + 10); // Set review 10 years from now
@@ -339,7 +341,6 @@
             let queue = [];
             for (const wordKey in srsProgressData) {
                 const progress = srsProgressData[wordKey];
-                // Exclude "known" words from the review queue
                 if (new Date(progress.nextReviewDate) <= today && progress.level < 99) {
                     queue.push(wordKey);
                 }
@@ -350,7 +351,6 @@
         function getTopicReviewQueue(categoryKey) {
             if (!vocabularyData[categoryKey]) return [];
             const topicWords = Object.keys(vocabularyData[categoryKey]);
-            // Exclude "known" words from the review queue
             return topicWords.filter(wordKey => srsProgressData.hasOwnProperty(wordKey) && srsProgressData[wordKey].level < 99);
         }
 
@@ -571,13 +571,22 @@
                 }
 
                 const partsOfSpeech = [...new Set(cardData.meanings.map(m => m.type))].join(', ');
-                const phoneticHTML = cardData.phonetic ? `<p class="text-2xl text-slate-500 mt-1">${cardData.phonetic}</p>` : '';
+                const phoneticText = cardData.phonetic ? `/${cardData.phonetic.replace(/\//g, '')}/` : '';
                 ui.cardFrontContent.innerHTML = `
                     <div class="text-center">
-                        <h2 class="text-5xl font-bold break-words text-slate-800">${wordKey}</h2>
-                        <p class="text-lg italic text-slate-400 mt-2">${partsOfSpeech}</p>
-                        ${phoneticHTML}
+                        <div class="flex items-center justify-center gap-3">
+                            <h2 class="text-5xl font-bold break-words text-slate-800">${wordKey}</h2>
+                            <button id="front-audio-btn" class="play-audio-btn text-blue-500">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path></svg>
+                            </button>
+                        </div>
+                        <p class="text-xl italic text-slate-500 mt-2">(${partsOfSpeech}) ${phoneticText}</p>
                     </div>`;
+                
+                document.getElementById('front-audio-btn').addEventListener('click', (e) => {
+                    e.stopPropagation(); // Prevent card from flipping
+                    playAudio(wordKey, e.currentTarget);
+                });
                 
                 const backContentWrapper = document.createElement('div');
                 backContentWrapper.className = 'p-4 w-full';
@@ -708,7 +717,7 @@
             }
             
             ui.progressModalTitle.textContent = title;
-            const counts = { unstudied: 0, hard: 0, good: 0, easy: 0 };
+            const counts = { unstudied: 0, hard: 0, good: 0, easy: 0, known: 0 };
             const totalWords = wordsToShow.length;
 
             wordsToShow.forEach(wordInfo => {
@@ -721,9 +730,9 @@
                     const level = progress.level;
                     dotTitle += ` - Level: ${level}`;
 
-                    if (level >= 99) { // Known words
-                        dotColorClass = 'bg-green-500';
-                        counts.easy++;
+                    if (level >= 99) {
+                        dotColorClass = 'bg-purple-500';
+                        counts.known++;
                     } else if (level <= 2) {
                         dotColorClass = 'bg-red-500';
                         counts.hard++;
@@ -768,6 +777,8 @@
             ui.statsGoodPercent.textContent = `${calcPercent(counts.good)}%`;
             ui.statsEasyCount.textContent = counts.easy;
             ui.statsEasyPercent.textContent = `${calcPercent(counts.easy)}%`;
+            ui.statsKnownCount.textContent = counts.known;
+            ui.statsKnownPercent.textContent = `${calcPercent(counts.known)}%`;
         }
         
         function playAudio(text, buttonEl) {
@@ -819,7 +830,7 @@
                     return;
                 }
                 console.error("SpeechSynthesis Error:", e);
-                showErrorModal(`Trình duyệt không hỗ trợ phát âm thanh (${e.error})`, "Lỗi tương thích");
+                showToast(`Lỗi phát âm: ${e.error}`);
                 cleanup();
             };
 
@@ -859,9 +870,8 @@
             } else {
                 // In review mode, remove the word from the current queue and continue
                 currentWords.splice(currentIndex, 1);
-                // If we're at the end, stay there, otherwise the index is now correct for the next item
                 if (currentIndex >= currentWords.length) {
-                    currentIndex = currentWords.length; // Go to the "end of session" screen
+                    currentIndex = currentWords.length;
                 }
                 displayCard();
             }
@@ -1015,7 +1025,7 @@
             ui.cardNextBtn.addEventListener('click', (e) => { e.stopPropagation(); navigate(1); });
 
             ui.flashcard.addEventListener('click', (e) => {
-                if (e.target.closest('.play-audio-btn') || e.target.closest('#review-again-btn') || e.target.closest('.card-nav-btn') || e.target.closest('.srs-icon-btn')) {
+                if (e.target.closest('.play-audio-btn') || e.target.closest('#review-again-btn') || e.target.closest('.card-nav-btn') || e.target.closest('.srs-icon-btn') || e.target.closest('#front-audio-btn')) {
                     return;
                 }
                 if (currentWords.length > 0 && currentIndex < currentWords.length) {
@@ -1137,7 +1147,6 @@
 
         // --- APP START ---
         document.addEventListener('DOMContentLoaded', () => {
-            // *** FIX: Add event listeners to prevent zoom on iOS ***
             document.addEventListener('touchmove', function (event) {
                 if (event.scale !== 1 && event.scale !== undefined) { 
                     event.preventDefault(); 
