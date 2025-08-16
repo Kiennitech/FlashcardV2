@@ -380,18 +380,24 @@
             const hasMultipleWords = currentWords.length > 1;
             const isLearnMode = currentMode === MODES.LEARN;
             const isReviewMode = currentMode === MODES.TOPIC_REVIEW || currentMode === MODES.GLOBAL_REVIEW;
+            const isGlobalReviewMode = currentMode === MODES.GLOBAL_REVIEW;
 
             ui.srsControls.style.display = 'flex';
-            ui.shuffleBtn.classList.toggle('hidden', !hasMultipleWords || isReviewMode);
-            ui.shuffleBtn.classList.toggle('flex', hasMultipleWords && !isReviewMode);
-            ui.topicProgressBtn.classList.toggle('hidden', !showTopicProgress);
-            ui.topicProgressBtn.classList.toggle('flex', showTopicProgress);
-            ui.progressMatrixBtn.classList.toggle('hidden', isReviewMode);
-            ui.progressMatrixBtn.classList.toggle('flex', !isReviewMode);
-
-            ui.backToLearnBtn.classList.toggle('hidden', !isReviewMode);
-            ui.backToLearnBtn.classList.toggle('flex', isReviewMode);
             
+            // Logic for action buttons
+            ui.shuffleBtn.classList.toggle('hidden', isReviewMode || !hasMultipleWords);
+            ui.topicProgressBtn.classList.toggle('hidden', !showTopicProgress);
+            // *** FIX: Show progress matrix button in topic review as well ***
+            ui.progressMatrixBtn.classList.toggle('hidden', isGlobalReviewMode);
+            ui.backToLearnBtn.classList.toggle('hidden', !isReviewMode);
+
+            // Group visibility based on children
+            const actionGroup = document.getElementById('action-buttons-group');
+            const isAnyActionVisible = Array.from(actionGroup.children).some(child => !child.classList.contains('hidden'));
+            actionGroup.classList.toggle('hidden', !isAnyActionVisible);
+            actionGroup.classList.toggle('flex', isAnyActionVisible);
+
+            // Logic for transient controls (arrows, counter)
             if (isLearnMode && hasMultipleWords) {
                 showTransientControls();
             } else {
@@ -940,7 +946,8 @@
             ui.cardNextBtn.addEventListener('click', (e) => { e.stopPropagation(); navigate(1); });
 
             ui.flashcard.addEventListener('click', (e) => {
-                if (e.target.closest('.card-action-btn') || e.target.closest('.play-audio-btn') || e.target.closest('#review-again-btn') || e.target.closest('.card-nav-btn')) {
+                // *** FIX: Added .srs-rating-btn to the exclusion list to prevent flipping when rating a card ***
+                if (e.target.closest('.play-audio-btn') || e.target.closest('#review-again-btn') || e.target.closest('.card-nav-btn') || e.target.closest('.srs-rating-btn')) {
                     return;
                 }
                 if (currentWords.length > 0 && currentIndex < currentWords.length) {
