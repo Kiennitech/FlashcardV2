@@ -1,0 +1,1014 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flashcard TOEIC - Lặp lại ngắt quãng</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        html, body { height: 100%; overflow-x: hidden; }
+        body { font-family: 'Inter', sans-serif; background-color: #f1f5f9; padding-top: 1rem; padding-bottom: 1rem; }
+        body.modal-open { overflow: hidden; }
+        .flashcard-container { perspective: 1200px; }
+        .flashcard { width: 100%; height: 100%; position: relative; transform-style: preserve-3d; transition: transform 0.7s cubic-bezier(0.4, 0.0, 0.2, 1); cursor: pointer; }
+        .flashcard.is-flipped { transform: rotateY(-180deg); }
+        .flashcard-face { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; -webkit-backface-visibility: hidden; display: flex; flex-direction: column; justify-content: center; align-items: center; border-radius: 1.5rem; box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.07), 0 4px 6px -4px rgb(0 0 0 / 0.1); padding: 1.5rem; border: 1px solid rgba(0,0,0,0.05); }
+        .flashcard-front { background-color: white; color: #111827; }
+        .flashcard-back { background-color: #f8fafc; color: #0f172a; transform: rotateY(-180deg); overflow-y: auto; justify-content: flex-start; }
+        .animated-button { transition: all 0.2s cubic-bezier(0.4, 0.0, 0.2, 1); box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1); }
+        .animated-button:hover { transform: translateY(-2px); box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1); }
+        .animated-button:active { transform: translateY(0px); box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1); }
+        .play-audio-btn { background: none; border: none; padding: 6px; cursor: pointer; transition: all 0.2s; display: inline-flex; vertical-align: middle; color: #0f172a; }
+        .play-audio-btn:hover { transform: scale(1.1); color: #0ea5e9; }
+        .play-audio-btn.playing, .play-audio-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        .play-audio-btn.playing svg { color: #0ea5e9; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .loader { border: 2px solid #f3f3f3; border-top: 2px solid #3498db; border-radius: 50%; width: 20px; height: 20px; animation: spin 1s linear infinite; display: inline-block; }
+        .modal.hidden { display: none; }
+        .progress-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(16px, 1fr)); gap: 4px; }
+        .progress-dot { cursor: pointer; transition: transform 0.1s ease-in-out; }
+        .progress-dot:hover { transform: scale(1.5); }
+        #toast-notification { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background-color: #2d3748; color: white; padding: 12px 24px; border-radius: 8px; z-index: 100; opacity: 0; visibility: hidden; transition: opacity 0.3s, visibility 0.3s, transform 0.3s; }
+        #toast-notification.show { opacity: 1; visibility: visible; transform: translate(-50%, -10px); }
+    </style>
+</head>
+<body class="flex flex-col items-center">
+
+    <div class="w-full max-w-3xl mx-auto flex flex-col flex-grow">
+        <main class="flex-grow">
+            <div class="flashcard-container w-full h-[32rem] md:h-[45rem] mb-6 relative mt-4">
+                <div id="flashcard" class="flashcard">
+                    <div class="flashcard-face flashcard-front">
+                        <div id="card-front-content" class="text-center p-4">
+                            <p class="text-xl text-slate-500">Đang tải dữ liệu từ vựng...</p>
+                        </div>
+                    </div>
+                    <div class="flashcard-face flashcard-back">
+                        <div id="card-back-content" class="text-left w-full h-full"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="navigation-controls" class="flex items-center justify-between w-full my-8">
+                <button id="prev-btn" class="animated-button px-6 py-3 bg-white rounded-xl flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none disabled:shadow-none">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8z"/></svg>
+                    Trước
+                </button>
+                <div id="card-counter" class="text-lg font-semibold text-slate-700">0 / 0</div>
+                <button id="next-btn" class="animated-button px-6 py-3 bg-white rounded-xl flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none disabled:shadow-none">
+                    Sau
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z"/></svg>
+                </button>
+            </div>
+            
+            <div id="srs-controls" class="flex flex-col items-center justify-center w-full mb-8 space-y-4">
+                <div id="srs-rating-group" class="w-full items-center justify-center space-x-2 flex invisible opacity-0 transition-opacity duration-300 ease-in-out">
+                   <button data-rating="hard" class="srs-rating-btn animated-button px-4 sm:px-6 py-3 bg-red-500 text-white rounded-xl flex-1 w-0 flex justify-center">Khó</button>
+                   <button data-rating="good" class="srs-rating-btn animated-button px-4 sm:px-6 py-3 bg-blue-500 text-white rounded-xl flex-1 w-0 flex justify-center">Bình thường</button>
+                   <button data-rating="easy" class="srs-rating-btn animated-button px-4 sm:px-6 py-3 bg-green-500 text-white rounded-xl flex-1 w-0 flex justify-center">Dễ</button>
+                </div>
+
+                <div id="action-buttons-group" class="flex items-center justify-center gap-3">
+                    <button id="shuffle-btn" class="hidden animated-button p-4 bg-white text-slate-600 rounded-xl" title="Xáo trộn danh sách từ">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 3 21 3 21 8"></polyline><line x1="4" y1="20" x2="21" y2="3"></line><polyline points="21 16 21 21 16 21"></polyline><line x1="15" y1="15" x2="21" y2="21"></line><line x1="4" y1="4" x2="9" y2="9"></line></svg>
+                    </button>
+                     <button id="topic-progress-btn" class="hidden animated-button p-4 bg-white text-slate-600 rounded-xl" title="Tiến độ Chủ đề">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-pie-chart"><path d="M21.21 15.89A10 10 0 1 1 8 2.83"/><path d="M22 12A10 10 0 0 0 12 2v10z"/></svg>
+                    </button>
+                    <button id="progress-matrix-btn" class="animated-button p-4 bg-white text-slate-600 rounded-xl" title="Tiến độ học tập tổng quát">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
+                    </button>
+                </div>
+            </div>
+        </main>
+        
+        <footer class="w-full pt-4 pb-4">
+            <div class="w-full max-w-xl mx-auto flex flex-col gap-3">
+                <!-- Row for review buttons -->
+                <div class="flex items-center gap-3">
+                    <button id="topic-review-btn" class="hidden animated-button flex-1 px-4 py-2 bg-cyan-500 hover:bg-cyan-600 text-white font-semibold rounded-lg flex flex-col items-center justify-center disabled:bg-slate-300 disabled:transform-none disabled:shadow-none text-sm" title="Ôn tập các từ đã học trong chủ đề này">
+                        <div class="flex items-center gap-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+                            <span>Ôn tập Chủ đề</span>
+                        </div>
+                        <span class="text-xs font-normal opacity-80">(<span class="font-bold">0</span>)</span>
+                    </button>
+                    <button id="srs-review-btn" class="animated-button flex-1 px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white font-semibold rounded-lg flex flex-col items-center justify-center disabled:bg-slate-300 disabled:transform-none disabled:shadow-none text-sm" title="Ôn tập các từ đã học theo phương pháp lặp lại ngắt quãng">
+                        <div class="flex items-center gap-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path></svg>
+                            <span>Ôn tập Chung</span>
+                        </div>
+                        <span class="text-xs font-normal opacity-80">(<span class="font-bold">0</span>)</span>
+                    </button>
+                </div>
+                <!-- Row for category select -->
+                <div class="relative w-full">
+                    <select id="category-select" class="w-full p-2.5 text-sm font-medium text-slate-700 bg-white border border-slate-300 rounded-lg shadow-sm appearance-none focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer" title="Chọn chủ đề để học">
+                    </select>
+                    <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-slate-700">
+                        <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/></svg>
+                    </div>
+                </div>
+            </div>
+        </footer>
+    </div>
+    
+    <div id="error-modal" class="modal hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+        <div class="bg-white rounded-lg shadow-xl p-6 max-w-sm w-full">
+            <h3 id="error-title" class="text-lg font-bold text-red-600 mb-2">Đã xảy ra lỗi</h3>
+            <p id="error-message" class="text-slate-600 mb-4">Không thể thực hiện yêu cầu. Vui lòng thử lại.</p>
+            <button id="close-error-modal-btn" class="w-full bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition-colors">Đóng</button>
+        </div>
+    </div>
+
+    <div id="progress-matrix-modal" class="modal hidden fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center p-4 z-50">
+        <div class="bg-white rounded-2xl shadow-xl p-6 max-w-4xl w-full max-h-[80vh] flex flex-col">
+            <div class="flex justify-between items-center mb-4">
+                <h3 id="progress-modal-title" class="text-xl font-bold text-slate-800">Tiến độ học tập</h3>
+                <button id="close-progress-matrix-btn" class="text-slate-500 hover:text-slate-800 text-3xl leading-none">&times;</button>
+            </div>
+            <div id="progress-stats" class="grid grid-cols-2 md:grid-cols-4 items-center justify-center gap-4 text-xs mb-4">
+                <div class="flex items-center gap-1.5"><div class="w-3 h-3 rounded-sm bg-slate-300"></div><span>Chưa học (<span id="stats-unstudied-count">0</span> - <span id="stats-unstudied-percent">0%</span>)</span></div>
+                <div class="flex items-center gap-1.5"><div class="w-3 h-3 rounded-sm bg-red-500"></div><span>Khó (<span id="stats-hard-count">0</span> - <span id="stats-hard-percent">0%</span>)</span></div>
+                <div class="flex items-center gap-1.5"><div class="w-3 h-3 rounded-sm bg-blue-500"></div><span>Bình thường (<span id="stats-good-count">0</span> - <span id="stats-good-percent">0%</span>)</span></div>
+                <div class="flex items-center gap-1.5"><div class="w-3 h-3 rounded-sm bg-green-500"></div><span>Dễ (<span id="stats-easy-count">0</span> - <span id="stats-easy-percent">0%</span>)</span></div>
+            </div>
+            <div id="progress-grid-container" class="progress-grid overflow-y-auto p-2 bg-slate-100 rounded-lg">
+            </div>
+            <div class="mt-4 pt-4 border-t border-slate-200">
+                <button id="reset-progress-btn" class="w-full bg-red-100 text-red-700 px-4 py-2 rounded-lg hover:bg-red-200 transition-colors">Xóa toàn bộ tiến trình học tập</button>
+            </div>
+        </div>
+    </div>
+    
+    <div id="confirm-modal" class="modal hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+        <div class="bg-white rounded-lg shadow-xl p-6 max-w-sm w-full">
+            <h3 id="confirm-title" class="text-lg font-bold text-slate-800 mb-2">Xác nhận</h3>
+            <p id="confirm-message" class="text-slate-600 mb-4">Bạn có chắc chắn muốn thực hiện hành động này không?</p>
+            <div class="flex justify-end gap-3">
+                <button id="cancel-btn" class="px-4 py-2 bg-slate-200 text-slate-800 rounded-lg hover:bg-slate-300">Hủy</button>
+                <button id="confirm-btn" class="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600">Xác nhận</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="toast-notification"></div>
+
+    <script>
+        // --- CONSTANTS AND STATE VARIABLES ---
+        const SRS_PROGRESS_KEY = "toeicSrsProgressData";
+        const LAST_SESSION_KEY = "toeicLastSession";
+        const TOPIC_PROGRESS_KEY = "toeicTopicProgress"; 
+
+        // --- DATA HAS BEEN REMOVED FROM HERE ---
+
+        const MODES = { LEARN: 'learn', TOPIC_REVIEW: 'topic_review', GLOBAL_REVIEW: 'global_review' };
+        let currentMode = MODES.LEARN;
+
+        let vocabularyData = {};
+        let srsProgressData = {};
+        let topicProgress = {}; 
+
+        const SRS_INTERVALS = { 1: 1, 2: 3, 3: 7, 4: 14, 5: 30, 6: 90 };
+        const MAX_SRS_LEVEL = Object.keys(SRS_INTERVALS).length;
+
+        let currentCategoryKey = '';
+        let currentWords = [];
+        let currentIndex = 0;
+        
+        let speechSynth = window.speechSynthesis;
+        let availableVoices = [];
+        let voicesLoaded = false;
+
+        // --- UI ELEMENT REFERENCES ---
+        const ui = {
+            flashcard: document.getElementById('flashcard'),
+            cardFrontContent: document.getElementById('card-front-content'),
+            cardBackContent: document.getElementById('card-back-content'),
+            navigationControls: document.getElementById('navigation-controls'),
+            srsControls: document.getElementById('srs-controls'),
+            srsRatingGroup: document.getElementById('srs-rating-group'),
+            prevBtn: document.getElementById('prev-btn'),
+            nextBtn: document.getElementById('next-btn'),
+            cardCounter: document.getElementById('card-counter'),
+            categorySelect: document.getElementById('category-select'),
+            srsReviewBtn: document.getElementById('srs-review-btn'),
+            topicReviewBtn: document.getElementById('topic-review-btn'),
+            errorModal: document.getElementById('error-modal'),
+            errorTitle: document.getElementById('error-title'),
+            errorMessage: document.getElementById('error-message'),
+            closeErrorModalBtn: document.getElementById('close-error-modal-btn'),
+            progressMatrixModal: document.getElementById('progress-matrix-modal'),
+            progressModalTitle: document.getElementById('progress-modal-title'),
+            progressMatrixBtn: document.getElementById('progress-matrix-btn'),
+            topicProgressBtn: document.getElementById('topic-progress-btn'),
+            closeProgressMatrixBtn: document.getElementById('close-progress-matrix-btn'),
+            progressGridContainer: document.getElementById('progress-grid-container'),
+            shuffleBtn: document.getElementById('shuffle-btn'),
+            toast: document.getElementById('toast-notification'),
+            resetProgressBtn: document.getElementById('reset-progress-btn'),
+            confirmModal: document.getElementById('confirm-modal'),
+            confirmTitle: document.getElementById('confirm-title'),
+            confirmMessage: document.getElementById('confirm-message'),
+            confirmBtn: document.getElementById('confirm-btn'),
+            cancelBtn: document.getElementById('cancel-btn'),
+            statsUnstudiedCount: document.getElementById('stats-unstudied-count'),
+            statsUnstudiedPercent: document.getElementById('stats-unstudied-percent'),
+            statsHardCount: document.getElementById('stats-hard-count'),
+            statsHardPercent: document.getElementById('stats-hard-percent'),
+            statsGoodCount: document.getElementById('stats-good-count'),
+            statsGoodPercent: document.getElementById('stats-good-percent'),
+            statsEasyCount: document.getElementById('stats-easy-count'),
+            statsEasyPercent: document.getElementById('stats-easy-percent'),
+        };
+        
+        const speakerIconSVG = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-volume-2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/></svg>`;
+        const loadingIconSVG = `<div class="loader"></div>`;
+
+        // --- CORE FUNCTIONS ---
+        
+        function findWordData(wordKey) {
+            for (const category in vocabularyData) {
+                if (vocabularyData[category][wordKey]) {
+                    return vocabularyData[category][wordKey];
+                }
+            }
+            return null;
+        }
+
+        // --- SRS (Spaced Repetition System) LOGIC ---
+
+        function updateSrsProgress(wordKey, rating) {
+            let progress = srsProgressData[wordKey] || { level: 1 };
+            let currentLevel = progress.level;
+
+            if (rating === 'hard') {
+                currentLevel = 1;
+            } else if (rating === 'good') {
+                // Stays the same level, but resets the timer
+            } else if (rating === 'easy') {
+                currentLevel = Math.min(MAX_SRS_LEVEL, currentLevel + 1);
+            }
+
+            const intervalDays = SRS_INTERVALS[currentLevel];
+            const nextReviewDate = new Date();
+            nextReviewDate.setDate(nextReviewDate.getDate() + intervalDays);
+            
+            srsProgressData[wordKey] = {
+                level: currentLevel,
+                nextReviewDate: nextReviewDate.toISOString()
+            };
+            saveSrsProgress();
+        }
+
+        function getGlobalReviewQueue() {
+            const today = new Date();
+            today.setHours(23, 59, 59, 999);
+            let queue = [];
+            for (const wordKey in srsProgressData) {
+                const progress = srsProgressData[wordKey];
+                if (new Date(progress.nextReviewDate) <= today) {
+                    queue.push(wordKey);
+                }
+            }
+            return queue;
+        }
+
+        function getTopicReviewQueue(categoryKey) {
+            if (!vocabularyData[categoryKey]) return [];
+            const topicWords = Object.keys(vocabularyData[categoryKey]);
+            return topicWords.filter(wordKey => srsProgressData.hasOwnProperty(wordKey));
+        }
+
+
+        // --- DATA PERSISTENCE (LocalStorage) ---
+
+        function saveSrsProgress() {
+            try {
+                localStorage.setItem(SRS_PROGRESS_KEY, JSON.stringify(srsProgressData));
+            } catch (e) {
+                console.error("Failed to save SRS progress:", e);
+                showErrorModal("Không thể lưu tiến trình học tập.");
+            }
+        }
+
+        function loadSrsProgress() {
+            const savedData = localStorage.getItem(SRS_PROGRESS_KEY);
+            if (savedData) {
+                try {
+                    srsProgressData = JSON.parse(savedData);
+                } catch (e) {
+                    srsProgressData = {};
+                }
+            }
+        }
+        
+        function loadTopicProgress() {
+            const savedData = localStorage.getItem(TOPIC_PROGRESS_KEY);
+            if (savedData) {
+                try {
+                    topicProgress = JSON.parse(savedData);
+                } catch (e) {
+                    topicProgress = {};
+                }
+            }
+        }
+
+        function saveTopicProgress() {
+            localStorage.setItem(TOPIC_PROGRESS_KEY, JSON.stringify(topicProgress));
+        }
+
+
+        function saveLastSession() {
+            const sessionData = {
+                mode: currentMode,
+                category: currentCategoryKey,
+                words: currentWords,
+                index: currentIndex
+            };
+            localStorage.setItem(LAST_SESSION_KEY, JSON.stringify(sessionData));
+        }
+
+        function loadLastSession() {
+            const savedSession = localStorage.getItem(LAST_SESSION_KEY);
+            if (savedSession) {
+                try {
+                    return JSON.parse(savedSession);
+                } catch (e) {
+                    return null;
+                }
+            }
+            return null;
+        }
+
+        function clearLastSession() {
+             localStorage.removeItem(LAST_SESSION_KEY);
+        }
+        
+        // --- UI RENDERING AND UPDATES ---
+
+        function updateControlVisibility() {
+            const isLearnMode = currentMode === MODES.LEARN;
+            const showTopicProgress = currentMode === MODES.LEARN || currentMode === MODES.TOPIC_REVIEW;
+            const hasMultipleWords = currentWords.length > 1;
+
+            ui.navigationControls.style.display = isLearnMode ? 'flex' : 'none';
+            ui.srsControls.style.display = 'flex';
+            ui.shuffleBtn.classList.toggle('hidden', !hasMultipleWords);
+            ui.shuffleBtn.classList.toggle('flex', hasMultipleWords);
+            ui.topicProgressBtn.classList.toggle('hidden', !showTopicProgress);
+            ui.topicProgressBtn.classList.toggle('flex', showTopicProgress);
+            updateReviewButtons();
+        }
+
+
+        function updateReviewButtons() {
+            const globalQueue = getGlobalReviewQueue();
+            ui.srsReviewBtn.querySelector('.font-bold').textContent = globalQueue.length;
+            ui.srsReviewBtn.disabled = globalQueue.length === 0;
+
+            if (currentMode === MODES.LEARN) {
+                const topicQueue = getTopicReviewQueue(currentCategoryKey);
+                ui.topicReviewBtn.querySelector('.font-bold').textContent = topicQueue.length;
+                ui.topicReviewBtn.disabled = topicQueue.length === 0;
+                ui.topicReviewBtn.classList.remove('hidden');
+                ui.topicReviewBtn.classList.add('flex');
+            } else {
+                ui.topicReviewBtn.classList.add('hidden');
+                ui.topicReviewBtn.classList.remove('flex');
+            }
+        }
+
+        function createCategoryDropdown() {
+            ui.categorySelect.innerHTML = '';
+            let sortedKeys = Object.keys(vocabularyData).sort();
+
+            sortedKeys.forEach((key) => {
+                const count = Object.keys(vocabularyData[key]).length;
+                const option = document.createElement('option');
+                option.value = key;
+                option.textContent = `${key} (${count})`;
+                ui.categorySelect.appendChild(option);
+            });
+        }
+
+
+        function startSession(mode, categoryKey, customWordList = null, resumeIndex = null) {
+            currentMode = mode;
+            currentCategoryKey = categoryKey;
+            
+            if (mode === MODES.LEARN) {
+                currentWords = vocabularyData[categoryKey] ? Object.keys(vocabularyData[categoryKey]) : [];
+                const savedIndex = topicProgress[categoryKey] || 0;
+                const startFrom = (savedIndex < currentWords.length) ? savedIndex : 0;
+                currentIndex = resumeIndex !== null ? resumeIndex : startFrom;
+            } else { 
+                currentWords = customWordList || [];
+                currentIndex = resumeIndex !== null ? resumeIndex : 0;
+            }
+            
+            if (ui.categorySelect.value !== categoryKey && mode === MODES.LEARN) {
+                ui.categorySelect.value = categoryKey; 
+            }
+            updateControlVisibility();
+            displayCard();
+        }
+
+        function displayCard() {
+            if (ui.flashcard.classList.contains('is-flipped')) {
+                ui.flashcard.classList.remove('is-flipped');
+            }
+            
+            ui.srsRatingGroup.classList.add('invisible', 'opacity-0');
+
+            setTimeout(() => { 
+                if (currentWords.length === 0 || currentIndex >= currentWords.length) {
+                    ui.cardFrontContent.innerHTML = '';
+                    ui.cardBackContent.innerHTML = '';
+
+                    let message;
+                    const isReviewMode = currentMode === MODES.TOPIC_REVIEW || currentMode === MODES.GLOBAL_REVIEW;
+
+                    if (currentIndex >= currentWords.length && currentWords.length > 0) {
+                        message = 'Chúc mừng! Bạn đã hoàn thành phiên ôn tập.';
+                        clearLastSession();
+                    } else {
+                        if (currentMode === MODES.LEARN) {
+                            message = 'Chủ đề này chưa có từ nào.';
+                        } else {
+                            message = 'Không có từ nào cần ôn tập trong danh sách này.';
+                        }
+                    }
+
+                    let contentHTML = `<div class="text-center p-4">
+                        <p class="text-xl text-slate-500 mb-6">${message}</p>`;
+
+                    if (isReviewMode && currentIndex >= currentWords.length && currentWords.length > 0) {
+                        contentHTML += `<button id="review-again-btn" class="animated-button px-6 py-3 bg-blue-500 text-white rounded-xl flex items-center gap-2 mx-auto">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M8 3a5 5 0 1 0 4.546 2.914.5.5 0 0 1 .908-.417A6 6 0 1 1 8 2v1z"/><path d="M8 4.466V.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384L8.41 4.658A.25.25 0 0 1 8 4.466z"/></svg>
+                            Ôn tập lại
+                        </button>`;
+                    }
+                    contentHTML += `</div>`;
+                    ui.cardFrontContent.innerHTML = contentHTML;
+
+                    const reviewAgainBtn = document.getElementById('review-again-btn');
+                    if (reviewAgainBtn) {
+                        reviewAgainBtn.addEventListener('click', () => {
+                            for (let i = currentWords.length - 1; i > 0; i--) {
+                                const j = Math.floor(Math.random() * (i + 1));
+                                [currentWords[i], currentWords[j]] = [currentWords[j], currentWords[i]];
+                            }
+                            startSession(currentMode, currentCategoryKey, currentWords, 0);
+                        });
+                    }
+
+                    ui.cardCounter.textContent = "0 / 0";
+                    updateControlVisibility();
+                    return;
+                }
+
+                ui.cardFrontContent.innerHTML = '';
+                ui.cardBackContent.innerHTML = '';
+
+                const wordKey = currentWords[currentIndex];
+                const cardData = findWordData(wordKey);
+                
+                if (!cardData) { 
+                    ui.cardFrontContent.innerHTML = `<p class="text-xl text-red-500">Lỗi: Không tìm thấy dữ liệu từ.</p>`; 
+                    updateNavigation();
+                    return; 
+                }
+
+                ui.cardFrontContent.innerHTML = `<h2 class="text-5xl font-bold text-center break-words text-slate-800">${wordKey}</h2>`;
+                
+                const backContentWrapper = document.createElement('div');
+                backContentWrapper.className = 'p-4 w-full';
+
+                const headerDiv = document.createElement('div');
+                headerDiv.className = 'flex flex-col items-start gap-2 mb-4';
+                
+                const titleDiv = document.createElement('div');
+                titleDiv.className = 'flex items-baseline gap-2';
+                
+                const wordTitle = document.createElement('h3');
+                wordTitle.className = 'text-3xl font-bold text-sky-800';
+                wordTitle.textContent = wordKey;
+                
+                const phoneticText = document.createElement('p');
+                phoneticText.className = 'text-lg text-slate-500';
+                phoneticText.textContent = cardData.phonetic || '';
+
+                titleDiv.append(wordTitle, phoneticText);
+
+                const mainAudioBtn = document.createElement('button');
+                mainAudioBtn.className = 'play-audio-btn text-xl';
+                mainAudioBtn.dataset.textToSpeak = wordKey;
+                mainAudioBtn.title = 'Phát âm';
+                mainAudioBtn.innerHTML = speakerIconSVG;
+                mainAudioBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    playAudio(e.currentTarget.dataset.textToSpeak, e.currentTarget);
+                });
+
+                headerDiv.append(titleDiv, mainAudioBtn);
+                backContentWrapper.appendChild(headerDiv);
+
+                cardData.meanings.forEach((meaningData) => {
+                    const meaningBlock = document.createElement('div');
+                    meaningBlock.className = 'mb-5 p-4 bg-white rounded-xl border';
+
+                    const meaningHeader = document.createElement('div');
+                    meaningHeader.className = 'flex items-center gap-3 mb-3';
+                    
+                    const typeBadge = document.createElement('span');
+                    typeBadge.className = 'text-xs font-semibold uppercase text-sky-600 bg-sky-100 px-2 py-1 rounded-full';
+                    typeBadge.textContent = meaningData.type;
+
+                    const meaningText = document.createElement('p');
+                    meaningText.className = 'text-lg font-semibold text-slate-800';
+                    meaningText.textContent = meaningData.meaning;
+
+                    meaningHeader.append(typeBadge, meaningText);
+                    
+                    const exampleList = document.createElement('ul');
+                    exampleList.className = 'space-y-3 list-inside';
+
+                    meaningData.examples.forEach((ex) => {
+                        const listItem = document.createElement('li');
+                        listItem.className = 'text-base';
+                        
+                        const englishLine = document.createElement('p');
+                        englishLine.className = 'text-slate-700';
+                        englishLine.textContent = `“${ex.en}” `;
+
+                        const exampleAudioBtn = document.createElement('button');
+                        exampleAudioBtn.className = 'play-audio-btn';
+                        exampleAudioBtn.dataset.textToSpeak = ex.en;
+                        exampleAudioBtn.title = 'Phát âm ví dụ';
+                        exampleAudioBtn.innerHTML = speakerIconSVG;
+                        exampleAudioBtn.addEventListener('click', (e) => {
+                           e.stopPropagation();
+                           playAudio(e.currentTarget.dataset.textToSpeak, e.currentTarget);
+                        });
+
+                        englishLine.appendChild(exampleAudioBtn);
+
+                        const vietnameseLine = document.createElement('p');
+                        vietnameseLine.className = 'text-sm text-slate-500 italic ml-4';
+                        vietnameseLine.textContent = `→ ${ex.vi}`;
+
+                        listItem.append(englishLine, vietnameseLine);
+                        exampleList.appendChild(listItem);
+                    });
+
+                    meaningBlock.append(meaningHeader, exampleList);
+                    backContentWrapper.appendChild(meaningBlock);
+                });
+
+                ui.cardBackContent.appendChild(backContentWrapper);
+                updateNavigation();
+                updateControlVisibility();
+                if (currentMode !== MODES.GLOBAL_REVIEW) saveLastSession();
+            }, 150);
+        }
+
+        function updateNavigation() {
+            const hasWords = currentWords.length > 0;
+            ui.cardCounter.textContent = hasWords ? `${currentIndex + 1}/${currentWords.length}` : "0 / 0";
+            ui.prevBtn.disabled = !hasWords;
+            ui.nextBtn.disabled = !hasWords;
+        }
+
+        function updateProgressMatrixAndStats(categoryKey = null) {
+            ui.progressGridContainer.innerHTML = '';
+            
+            let wordsToShow = [];
+            let title = "Tiến độ học tập tổng quát";
+
+            if (categoryKey && vocabularyData[categoryKey]) {
+                title = `Tiến độ chủ đề: ${categoryKey}`;
+                const wordKeys = Object.keys(vocabularyData[categoryKey]);
+                wordsToShow = wordKeys.map(key => ({ key, category: categoryKey }));
+            } else {
+                const allWordsMap = new Map();
+                for (const category in vocabularyData) {
+                    for (const wordKey in vocabularyData[category]) {
+                        if (!allWordsMap.has(wordKey)) {
+                           allWordsMap.set(wordKey, { key: wordKey, category: category });
+                        }
+                    }
+                }
+                wordsToShow = Array.from(allWordsMap.values());
+            }
+            
+            ui.progressModalTitle.textContent = title;
+            const counts = { unstudied: 0, hard: 0, good: 0, easy: 0 };
+            const totalWords = wordsToShow.length;
+
+            wordsToShow.forEach(wordInfo => {
+                const dot = document.createElement('div');
+                let dotColorClass = 'bg-slate-300';
+                let dotTitle = `${wordInfo.key}`;
+
+                if (srsProgressData.hasOwnProperty(wordInfo.key)) {
+                    const progress = srsProgressData[wordInfo.key];
+                    const level = progress.level;
+                    dotTitle += ` - Level: ${level}`;
+
+                    if (level <= 2) {
+                        dotColorClass = 'bg-red-500';
+                        counts.hard++;
+                    } else if (level <= 4) {
+                        dotColorClass = 'bg-blue-500';
+                        counts.good++;
+                    } else {
+                        dotColorClass = 'bg-green-500';
+                        counts.easy++;
+                    }
+                } else {
+                    counts.unstudied++;
+                }
+                
+                dot.className = `progress-dot w-4 h-4 rounded-sm ${dotColorClass}`;
+                dot.title = dotTitle;
+                dot.dataset.wordKey = wordInfo.key;
+                dot.dataset.category = wordInfo.category;
+
+                dot.addEventListener('click', () => {
+                    const wordCategory = dot.dataset.category;
+                    const wordKey = dot.dataset.wordKey;
+                    
+                    const wordIndex = Object.keys(vocabularyData[wordCategory]).indexOf(wordKey);
+
+                    if (wordIndex !== -1) {
+                        startSession(MODES.LEARN, wordCategory, null, wordIndex);
+                        ui.progressMatrixModal.classList.add('hidden');
+                        unlockBodyScroll();
+                    }
+                });
+
+                ui.progressGridContainer.appendChild(dot);
+            });
+
+            const calcPercent = (count) => totalWords > 0 ? ((count / totalWords) * 100).toFixed(0) : 0;
+            ui.statsUnstudiedCount.textContent = counts.unstudied;
+            ui.statsUnstudiedPercent.textContent = `${calcPercent(counts.unstudied)}%`;
+            ui.statsHardCount.textContent = counts.hard;
+            ui.statsHardPercent.textContent = `${calcPercent(counts.hard)}%`;
+            ui.statsGoodCount.textContent = counts.good;
+            ui.statsGoodPercent.textContent = `${calcPercent(counts.good)}%`;
+            ui.statsEasyCount.textContent = counts.easy;
+            ui.statsEasyPercent.textContent = `${calcPercent(counts.easy)}%`;
+        }
+        
+        function playAudio(text, buttonEl) {
+            if (!text || buttonEl.disabled) return;
+            if (speechSynth.speaking) {
+                speechSynth.cancel();
+            }
+
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.lang = 'en-US';
+
+            const preferredVoices = ['Siri', 'Samantha', 'Google US English', 'Alex', 'Daniel'];
+            let selectedVoice = null;
+
+            for (const voiceName of preferredVoices) {
+                selectedVoice = availableVoices.find(voice => voice.name.includes(voiceName) && voice.lang.startsWith('en-'));
+                if (selectedVoice) break;
+            }
+
+            if (!selectedVoice) {
+                selectedVoice = availableVoices.find(voice => voice.lang.startsWith('en-US') && voice.localService);
+            }
+            if (!selectedVoice) {
+                selectedVoice = availableVoices.find(voice => voice.lang.startsWith('en-US'));
+            }
+            if (selectedVoice) {
+                utterance.voice = selectedVoice;
+            }
+
+            const originalContent = buttonEl.innerHTML;
+            buttonEl.innerHTML = loadingIconSVG;
+            buttonEl.disabled = true;
+
+            const cleanup = () => {
+                buttonEl.innerHTML = originalContent;
+                buttonEl.disabled = false;
+            };
+
+            utterance.onend = cleanup;
+            utterance.onerror = (e) => {
+                if (e.error === 'interrupted' || e.error === 'canceled') {
+                    cleanup();
+                    return;
+                }
+                console.error("SpeechSynthesis Error:", e);
+                showErrorModal(`Trình duyệt không hỗ trợ phát âm thanh (${e.error})`, "Lỗi tương thích");
+                cleanup();
+            };
+
+            speechSynth.speak( utterance );
+        }
+
+        // --- EVENT HANDLERS & USER ACTIONS ---
+        function handleSrsAnswer(rating) {
+            if (currentWords.length === 0) return;
+            
+            const wordKey = currentWords[currentIndex];
+            updateSrsProgress(wordKey, rating);
+            
+            if (currentMode === MODES.LEARN) {
+                if (currentIndex + 1 <= currentWords.length) {
+                    topicProgress[currentCategoryKey] = currentIndex + 1;
+                    saveTopicProgress();
+                }
+                navigate(1);
+            } else {
+                currentIndex++;
+                displayCard();
+            }
+        }
+        
+        function navigate(direction) {
+            if (currentWords.length > 1) {
+                let newIndex = currentIndex + direction;
+                if (newIndex >= currentWords.length) {
+                    newIndex = 0;
+                }
+                if (newIndex < 0) {
+                    newIndex = currentWords.length - 1;
+                }
+                currentIndex = newIndex;
+
+                if (currentMode === MODES.LEARN) {
+                     topicProgress[currentCategoryKey] = currentIndex;
+                     saveTopicProgress();
+                }
+
+                displayCard();
+            }
+        }
+
+        function shuffleCurrentQueue() {
+            if (currentWords.length < 2) return;
+            for (let i = currentWords.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [currentWords[i], currentWords[j]] = [currentWords[j], currentWords[i]];
+            }
+            currentIndex = 0;
+            displayCard();
+            showToast("Đã xáo trộn danh sách từ!");
+        }
+
+        function resetAllProgress() {
+            showConfirmModal(
+                "Xác nhận xóa tiến trình",
+                "Bạn có chắc chắn muốn xóa toàn bộ tiến trình học tập không? Hành động này không thể hoàn tác.",
+                () => {
+                    srsProgressData = {};
+                    topicProgress = {};
+                    localStorage.removeItem(SRS_PROGRESS_KEY);
+                    localStorage.removeItem(TOPIC_PROGRESS_KEY);
+                    clearLastSession();
+                    updateReviewButtons();
+                    showToast("Đã xóa toàn bộ tiến trình học tập.");
+                    const firstCategory = Object.keys(vocabularyData)[0] || null;
+                    if (firstCategory) {
+                        startSession(MODES.LEARN, firstCategory);
+                    }
+                }
+            );
+        }
+
+        function showToast(message) {
+            ui.toast.textContent = message;
+            ui.toast.classList.add('show');
+            setTimeout(() => {
+                ui.toast.classList.remove('show');
+            }, 2000);
+        }
+
+        function showErrorModal(message, title = "Đã xảy ra lỗi") { 
+            ui.errorTitle.textContent = title;
+            ui.errorMessage.textContent = message; 
+            ui.errorModal.classList.remove("hidden"); 
+            lockBodyScroll();
+        }
+
+        function showConfirmModal(title, message, onConfirm) {
+            ui.confirmTitle.textContent = title;
+            ui.confirmMessage.textContent = message;
+            ui.confirmModal.classList.remove('hidden');
+            lockBodyScroll();
+
+            const confirmHandler = () => {
+                onConfirm();
+                closeAndCleanup();
+            };
+
+            const cancelHandler = () => {
+                closeAndCleanup();
+            };
+            
+            const closeAndCleanup = () => {
+                ui.confirmModal.classList.add('hidden');
+                unlockBodyScroll();
+                ui.confirmBtn.removeEventListener('click', confirmHandler);
+                ui.cancelBtn.removeEventListener('click', cancelHandler);
+            };
+
+            ui.confirmBtn.addEventListener('click', confirmHandler);
+            ui.cancelBtn.addEventListener('click', cancelHandler);
+        }
+
+        function lockBodyScroll() {
+            document.body.classList.add('modal-open');
+        }
+
+        function unlockBodyScroll() {
+            document.body.classList.remove('modal-open');
+        }
+        
+        // --- *** NEW: DATA LOADING FUNCTION *** ---
+        async function loadVocabularyData(url) {
+            try {
+                const response = await fetch(url);
+                if (!response.ok) {
+                    throw new Error(`Lỗi HTTP! Trạng thái: ${response.status}`);
+                }
+                const data = await response.json();
+                return data;
+            } catch (error) {
+                console.error('Không thể tải dữ liệu từ vựng:', error);
+                ui.cardFrontContent.innerHTML = `<div class="text-center p-4">
+                    <h2 class="text-2xl font-bold text-red-600 mb-2">Lỗi Tải Dữ Liệu</h2>
+                    <p class="text-slate-600">Không thể tải tệp từ vựng. Vui lòng đảm bảo tệp <strong>${url}</strong> tồn tại và có định dạng JSON chính xác.</p>
+                    <p class="text-xs text-slate-400 mt-4">Chi tiết lỗi: ${error.message}</p>
+                </div>`;
+                return null;
+            }
+        }
+
+        // --- INITIALIZATION ---
+
+        function initializeApp(data) {
+            vocabularyData = data;
+            loadSrsProgress();
+            loadTopicProgress();
+            
+            createCategoryDropdown();
+            updateReviewButtons();
+
+            // --- Event Listeners ---
+            ui.prevBtn.addEventListener('click', () => navigate(-1));
+            ui.nextBtn.addEventListener('click', () => navigate(1));
+            
+            let touchstartX = 0, touchstartY = 0;
+            ui.flashcard.addEventListener('touchstart', e => {
+                touchstartX = e.changedTouches[0].screenX;
+                touchstartY = e.changedTouches[0].screenY;
+            }, { passive: true });
+
+            ui.flashcard.addEventListener('touchend', e => { 
+                const touchendX = e.changedTouches[0].screenX;
+                const touchendY = e.changedTouches[0].screenY;
+                const swipeThreshold = 50;
+                const swipeRestraint = 100;
+                const swipedX = touchendX - touchstartX;
+                const swipedY = touchendY - touchstartY;
+                if (Math.abs(swipedX) < swipeThreshold || Math.abs(swipedY) > swipeRestraint) return;
+                
+                if (currentMode === MODES.LEARN) {
+                    if (swipedX < 0) navigate(1);
+                    if (swipedX > 0) navigate(-1);
+                }
+            });
+
+            ui.flashcard.addEventListener('click', (e) => {
+                if (e.target.closest('.card-action-btn') || e.target.closest('.play-audio-btn') || e.target.closest('#review-again-btn')) {
+                    return;
+                }
+                if (currentWords.length > 0 && currentIndex < currentWords.length) {
+                    ui.flashcard.classList.toggle('is-flipped');
+                    const isFlipped = ui.flashcard.classList.contains('is-flipped');
+                    ui.srsRatingGroup.classList.toggle('invisible', !isFlipped);
+                    ui.srsRatingGroup.classList.toggle('opacity-0', !isFlipped);
+                }
+            });
+
+            ui.srsReviewBtn.addEventListener('click', () => {
+                let reviewQueue = getGlobalReviewQueue();
+                if (reviewQueue.length > 0) {
+                    for (let i = reviewQueue.length - 1; i > 0; i--) {
+                        const j = Math.floor(Math.random() * (i + 1));
+                        [reviewQueue[i], reviewQueue[j]] = [reviewQueue[j], reviewQueue[i]];
+                    }
+                    startSession(MODES.GLOBAL_REVIEW, "GLOBAL_REVIEW_MODE", reviewQueue, 0);
+                }
+            });
+
+            ui.topicReviewBtn.addEventListener('click', () => {
+                let reviewQueue = getTopicReviewQueue(currentCategoryKey);
+                if (reviewQueue.length > 0) {
+                     for (let i = reviewQueue.length - 1; i > 0; i--) {
+                        const j = Math.floor(Math.random() * (i + 1));
+                        [reviewQueue[i], reviewQueue[j]] = [reviewQueue[j], reviewQueue[i]];
+                    }
+                    startSession(MODES.TOPIC_REVIEW, currentCategoryKey, reviewQueue, 0);
+                }
+            });
+            
+            ui.closeErrorModalBtn.addEventListener('click', () => {
+                ui.errorModal.classList.add('hidden');
+                unlockBodyScroll();
+            });
+            
+            ui.progressMatrixBtn.addEventListener('click', () => {
+                updateProgressMatrixAndStats(); // Global progress
+                ui.progressMatrixModal.classList.remove('hidden');
+                lockBodyScroll();
+            });
+            ui.topicProgressBtn.addEventListener('click', () => {
+                updateProgressMatrixAndStats(currentCategoryKey); // Topic progress
+                ui.progressMatrixModal.classList.remove('hidden');
+                lockBodyScroll();
+            });
+            ui.closeProgressMatrixBtn.addEventListener('click', () => {
+                ui.progressMatrixModal.classList.add('hidden');
+                unlockBodyScroll();
+            });
+            ui.progressMatrixModal.addEventListener('click', (e) => {
+                if (e.target === ui.progressMatrixModal) {
+                    ui.progressMatrixModal.classList.add('hidden');
+                    unlockBodyScroll();
+                }
+            });
+
+            ui.shuffleBtn.addEventListener('click', shuffleCurrentQueue);
+            ui.resetProgressBtn.addEventListener('click', resetAllProgress);
+
+            document.querySelectorAll('.srs-rating-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    handleSrsAnswer(e.target.dataset.rating);
+                });
+            });
+
+            ui.categorySelect.addEventListener('change', (e) => {
+                const selectedKey = e.target.value;
+                startSession(MODES.LEARN, selectedKey);
+            });
+
+            const lastSession = loadLastSession();
+            const firstCategory = Object.keys(vocabularyData)[0] || null;
+
+            if (lastSession && vocabularyData[lastSession.category] && lastSession.mode !== MODES.LEARN) {
+                startSession(lastSession.mode, lastSession.category, lastSession.words, lastSession.index);
+            } else if (firstCategory) {
+                const categoryToLoad = (lastSession && vocabularyData[lastSession.category]) ? lastSession.category : firstCategory;
+                startSession(MODES.LEARN, categoryToLoad);
+            } else {
+                 ui.cardFrontContent.innerHTML = `<p class="text-xl text-slate-500">Không có dữ liệu từ vựng nào.</p>`;
+                 updateControlVisibility();
+            }
+        }
+        
+        async function startApp() {
+            // *** NEW: Thay đổi 'vocabulary.json' thành đường dẫn tới tệp JSON của bạn ***
+            const dataUrl = 'vocabulary.json';
+            const data = await loadVocabularyData(dataUrl);
+
+            if (data) { // Chỉ khởi tạo nếu tải dữ liệu thành công
+                try {
+                    initializeApp(data);
+                } catch (error) {
+                    console.error('Không thể khởi tạo ứng dụng với dữ liệu:', error);
+                    showErrorModal(`${error.message}.`, "Lỗi khởi tạo dữ liệu");
+                }
+            }
+        }
+        
+        function loadVoices() {
+            if (voicesLoaded) return;
+            availableVoices = speechSynthesis.getVoices();
+            if (availableVoices.length > 0) {
+                voicesLoaded = true;
+            }
+        }
+
+        // --- APP START ---
+        document.addEventListener('DOMContentLoaded', () => {
+            loadVoices();
+            if (speechSynthesis.onvoiceschanged !== undefined) {
+                speechSynthesis.onvoiceschanged = loadVoices;
+            }
+            startApp();
+        });
+    </script>
+</body>
+</html>
