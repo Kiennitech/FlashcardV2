@@ -57,13 +57,29 @@
         #card-counter.visible {
             opacity: 1;
         }
+        .srs-icon-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 0.5rem;
+            transition: background-color 0.2s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.25rem;
+            flex: 1;
+        }
+        .srs-icon-btn:hover {
+            background-color: #f1f5f9;
+        }
     </style>
 </head>
 <body class="flex flex-col items-center">
 
     <div class="w-full max-w-3xl mx-auto flex flex-col flex-grow">
         <main class="flex-grow">
-            <div class="flashcard-container w-full h-[32rem] md:h-[45rem] mb-6 relative mt-4">
+            <div class="flashcard-container w-full h-[35rem] md:h-[45rem] mb-6 relative mt-4">
                 <div id="flashcard" class="flashcard">
                     <div class="flashcard-face flashcard-front">
                         <div id="card-front-content" class="text-center p-4">
@@ -86,10 +102,24 @@
             </div>
             
             <div id="srs-controls" class="flex flex-col items-center justify-center w-full my-8 space-y-4">
-                <div id="srs-rating-group" class="w-full items-center justify-center space-x-2 flex invisible opacity-0 transition-opacity duration-300 ease-in-out">
-                   <button data-rating="hard" class="srs-rating-btn animated-button px-4 sm:px-6 py-3 bg-red-500 text-white rounded-xl flex-1 w-0 flex justify-center">Khó</button>
-                   <button data-rating="good" class="srs-rating-btn animated-button px-4 sm:px-6 py-3 bg-blue-500 text-white rounded-xl flex-1 w-0 flex justify-center">Bình thường</button>
-                   <button data-rating="easy" class="srs-rating-btn animated-button px-4 sm:px-6 py-3 bg-green-500 text-white rounded-xl flex-1 w-0 flex justify-center">Dễ</button>
+                <div id="srs-rating-group" class="w-full items-center justify-around space-x-2 flex invisible opacity-0 transition-opacity duration-300 ease-in-out bg-white p-2 rounded-2xl shadow-sm">
+                   <!-- New SRS Icon Buttons -->
+                   <button data-rating="easy" class="srs-icon-btn srs-rating-btn">
+                       <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M8 14s1.5 2 4 2 4-2 4-2"></path><line x1="9" y1="9" x2="9.01" y2="9"></line><line x1="15" y1="9" x2="15.01" y2="9"></line></svg>
+                       <span class="text-sm font-medium text-green-600">Dễ</span>
+                   </button>
+                   <button data-rating="good" class="srs-icon-btn srs-rating-btn">
+                       <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#f97316" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="8" y1="15" x2="16" y2="15"></line><line x1="9" y1="9" x2="9.01" y2="9"></line><line x1="15" y1="9" x2="15.01" y2="9"></line></svg>
+                       <span class="text-sm font-medium text-orange-500">Trung bình</span>
+                   </button>
+                   <button data-rating="hard" class="srs-icon-btn srs-rating-btn">
+                       <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M16 16s-1.5-2-4-2-4 2-4 2"></path><line x1="9" y1="9" x2="9.01" y2="9"></line><line x1="15" y1="9" x2="15.01" y2="9"></line></svg>
+                       <span class="text-sm font-medium text-red-500">Khó</span>
+                   </button>
+                   <button id="known-btn" class="srs-icon-btn">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 19 22 12 13 5 13 19"></polygon><polygon points="2 19 11 12 2 5 2 19"></polygon></svg>
+                       <span class="text-sm font-medium text-blue-500 text-center">Đã biết</span>
+                   </button>
                 </div>
 
                 <div id="action-buttons-group" class="flex items-center justify-center gap-3">
@@ -234,6 +264,7 @@
             progressGridContainer: document.getElementById('progress-grid-container'),
             shuffleBtn: document.getElementById('shuffle-btn'),
             backToLearnBtn: document.getElementById('back-to-learn-btn'),
+            knownBtn: document.getElementById('known-btn'),
             toast: document.getElementById('toast-notification'),
             resetProgressBtn: document.getElementById('reset-progress-btn'),
             confirmModal: document.getElementById('confirm-modal'),
@@ -290,13 +321,26 @@
             saveSrsProgress();
         }
 
+        // *** NEW: Function to mark a word as known ***
+        function markAsKnown(wordKey) {
+            const farFutureDate = new Date();
+            farFutureDate.setFullYear(farFutureDate.getFullYear() + 10); // Set review 10 years from now
+            srsProgressData[wordKey] = {
+                level: 99, // A special level to indicate "known"
+                nextReviewDate: farFutureDate.toISOString()
+            };
+            saveSrsProgress();
+            showToast(`'${wordKey}' đã được đánh dấu là đã biết.`);
+        }
+
         function getGlobalReviewQueue() {
             const today = new Date();
             today.setHours(23, 59, 59, 999);
             let queue = [];
             for (const wordKey in srsProgressData) {
                 const progress = srsProgressData[wordKey];
-                if (new Date(progress.nextReviewDate) <= today) {
+                // Exclude "known" words from the review queue
+                if (new Date(progress.nextReviewDate) <= today && progress.level < 99) {
                     queue.push(wordKey);
                 }
             }
@@ -306,7 +350,8 @@
         function getTopicReviewQueue(categoryKey) {
             if (!vocabularyData[categoryKey]) return [];
             const topicWords = Object.keys(vocabularyData[categoryKey]);
-            return topicWords.filter(wordKey => srsProgressData.hasOwnProperty(wordKey));
+            // Exclude "known" words from the review queue
+            return topicWords.filter(wordKey => srsProgressData.hasOwnProperty(wordKey) && srsProgressData[wordKey].level < 99);
         }
 
 
@@ -525,7 +570,14 @@
                     return; 
                 }
 
-                ui.cardFrontContent.innerHTML = `<h2 class="text-5xl font-bold text-center break-words text-slate-800">${wordKey}</h2>`;
+                const partsOfSpeech = [...new Set(cardData.meanings.map(m => m.type))].join(', ');
+                const phoneticHTML = cardData.phonetic ? `<p class="text-2xl text-slate-500 mt-1">${cardData.phonetic}</p>` : '';
+                ui.cardFrontContent.innerHTML = `
+                    <div class="text-center">
+                        <h2 class="text-5xl font-bold break-words text-slate-800">${wordKey}</h2>
+                        <p class="text-lg italic text-slate-400 mt-2">${partsOfSpeech}</p>
+                        ${phoneticHTML}
+                    </div>`;
                 
                 const backContentWrapper = document.createElement('div');
                 backContentWrapper.className = 'p-4 w-full';
@@ -540,11 +592,7 @@
                 wordTitle.className = 'text-3xl font-bold text-sky-800';
                 wordTitle.textContent = wordKey;
                 
-                const phoneticText = document.createElement('p');
-                phoneticText.className = 'text-lg text-slate-500';
-                phoneticText.textContent = cardData.phonetic || '';
-
-                titleDiv.append(wordTitle, phoneticText);
+                titleDiv.append(wordTitle);
 
                 const mainAudioBtn = document.createElement('button');
                 mainAudioBtn.className = 'play-audio-btn text-xl';
@@ -615,6 +663,10 @@
                 updateNavigation();
                 updateControlVisibility();
                 if (currentMode !== MODES.GLOBAL_REVIEW) saveLastSession();
+
+                if (currentMode === MODES.LEARN) {
+                    playAudio(wordKey, null);
+                }
             }, 150);
         }
 
@@ -669,7 +721,10 @@
                     const level = progress.level;
                     dotTitle += ` - Level: ${level}`;
 
-                    if (level <= 2) {
+                    if (level >= 99) { // Known words
+                        dotColorClass = 'bg-green-500';
+                        counts.easy++;
+                    } else if (level <= 2) {
                         dotColorClass = 'bg-red-500';
                         counts.hard++;
                     } else if (level <= 4) {
@@ -716,7 +771,7 @@
         }
         
         function playAudio(text, buttonEl) {
-            if (!text || buttonEl.disabled) return;
+            if (!text) return;
             if (speechSynth.speaking) {
                 speechSynth.cancel();
             }
@@ -742,13 +797,19 @@
                 utterance.voice = selectedVoice;
             }
 
-            const originalContent = buttonEl.innerHTML;
-            buttonEl.innerHTML = loadingIconSVG;
-            buttonEl.disabled = true;
+            let originalContent = null;
+            if (buttonEl) {
+                if(buttonEl.disabled) return;
+                originalContent = buttonEl.innerHTML;
+                buttonEl.innerHTML = loadingIconSVG;
+                buttonEl.disabled = true;
+            }
 
             const cleanup = () => {
-                buttonEl.innerHTML = originalContent;
-                buttonEl.disabled = false;
+                if (buttonEl) {
+                    buttonEl.innerHTML = originalContent;
+                    buttonEl.disabled = false;
+                }
             };
 
             utterance.onend = cleanup;
@@ -780,6 +841,28 @@
                 navigate(1);
             } else {
                 currentIndex++;
+                displayCard();
+            }
+        }
+
+        function handleKnownAnswer() {
+            if (currentWords.length === 0) return;
+            const wordKey = currentWords[currentIndex];
+            markAsKnown(wordKey);
+            
+            if (currentMode === MODES.LEARN) {
+                if (currentIndex + 1 <= currentWords.length) {
+                    topicProgress[currentCategoryKey] = currentIndex + 1;
+                    saveTopicProgress();
+                }
+                navigate(1);
+            } else {
+                // In review mode, remove the word from the current queue and continue
+                currentWords.splice(currentIndex, 1);
+                // If we're at the end, stay there, otherwise the index is now correct for the next item
+                if (currentIndex >= currentWords.length) {
+                    currentIndex = currentWords.length; // Go to the "end of session" screen
+                }
                 displayCard();
             }
         }
@@ -932,7 +1015,7 @@
             ui.cardNextBtn.addEventListener('click', (e) => { e.stopPropagation(); navigate(1); });
 
             ui.flashcard.addEventListener('click', (e) => {
-                if (e.target.closest('.play-audio-btn') || e.target.closest('#review-again-btn') || e.target.closest('.card-nav-btn') || e.target.closest('.srs-rating-btn')) {
+                if (e.target.closest('.play-audio-btn') || e.target.closest('#review-again-btn') || e.target.closest('.card-nav-btn') || e.target.closest('.srs-icon-btn')) {
                     return;
                 }
                 if (currentWords.length > 0 && currentIndex < currentWords.length) {
@@ -1003,8 +1086,12 @@
             document.querySelectorAll('.srs-rating-btn').forEach(btn => {
                 btn.addEventListener('click', (e) => {
                     e.stopPropagation();
-                    handleSrsAnswer(e.target.dataset.rating);
+                    handleSrsAnswer(e.currentTarget.dataset.rating);
                 });
+            });
+            ui.knownBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                handleKnownAnswer();
             });
 
             ui.categorySelect.addEventListener('change', (e) => {
