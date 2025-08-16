@@ -103,22 +103,21 @@
             
             <div id="srs-controls" class="flex flex-col items-center justify-center w-full my-8 space-y-4">
                 <div id="srs-rating-group" class="w-full items-center justify-around space-x-2 flex invisible opacity-0 transition-opacity duration-300 ease-in-out bg-white p-2 rounded-2xl shadow-sm">
-                   <!-- FIX: Corrected viewBox attribute for all SVGs -->
                    <button data-rating="easy" class="srs-icon-btn srs-rating-btn">
                        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M8 14s1.5 2 4 2 4-2 4-2"></path><line x1="9" y1="9" x2="9.01" y2="9"></line><line x1="15" y1="9" x2="15.01" y2="9"></line></svg>
                        <span class="text-sm font-medium text-green-600">Dễ</span>
                    </button>
                    <button data-rating="good" class="srs-icon-btn srs-rating-btn">
-                       <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#f97316" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="8" y1="15" x2="16" y2="15"></line><line x1="9" y1="9" x2="9.01" y2="9"></line><line x1="15" y1="9" x2="15.01" y2="9"></line></svg>
-                       <span class="text-sm font-medium text-orange-500">Trung bình</span>
+                       <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="8" y1="15" x2="16" y2="15"></line><line x1="9" y1="9" x2="9.01" y2="9"></line><line x1="15" y1="9" x2="15.01" y2="9"></line></svg>
+                       <span class="text-sm font-medium text-blue-500">Bình thường</span>
                    </button>
                    <button data-rating="hard" class="srs-icon-btn srs-rating-btn">
                        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M16 16s-1.5-2-4-2-4 2-4 2"></path><line x1="9" y1="9" x2="9.01" y2="9"></line><line x1="15" y1="9" x2="15.01" y2="9"></line></svg>
                        <span class="text-sm font-medium text-red-500">Khó</span>
                    </button>
                    <button id="known-btn" class="srs-icon-btn">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 19 22 12 13 5 13 19"></polygon><polygon points="2 19 11 12 2 5 2 19"></polygon></svg>
-                       <span class="text-sm font-medium text-blue-500 text-center">Đã biết</span>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#8b5cf6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 19 22 12 13 5 13 19"></polygon><polygon points="2 19 11 12 2 5 2 19"></polygon></svg>
+                       <span class="text-sm font-medium text-purple-500 text-center">Đã biết</span>
                    </button>
                 </div>
 
@@ -432,7 +431,7 @@
             ui.srsControls.style.display = 'flex';
             
             // Logic for action buttons
-            ui.shuffleBtn.classList.toggle('hidden', isReviewMode || !hasMultipleWords);
+            ui.shuffleBtn.classList.toggle('hidden', !hasMultipleWords);
             ui.topicProgressBtn.classList.toggle('hidden', !showTopicProgress);
             ui.progressMatrixBtn.classList.toggle('hidden', isGlobalReviewMode);
             ui.backToLearnBtn.classList.toggle('hidden', !isReviewMode);
