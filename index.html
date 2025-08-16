@@ -79,7 +79,7 @@
 
     <div class="w-full max-w-3xl mx-auto flex flex-col flex-grow">
         <main class="flex-grow">
-            <div class="flashcard-container w-full h-[36rem] md:h-[45rem] mb-6 relative mt-4">
+            <div class="flashcard-container w-full h-[35rem] md:h-[45rem] mb-6 relative mt-4">
                 <div id="flashcard" class="flashcard">
                     <div class="flashcard-face flashcard-front">
                         <div id="card-front-content" class="text-center p-4">
@@ -242,7 +242,6 @@
         const ui = {
             flashcard: document.getElementById('flashcard'),
             flashcardFront: document.querySelector('.flashcard-face.flashcard-front'),
-            cardFrontContent: document.getElementById('card-front-content'),
             cardBackContent: document.getElementById('card-back-content'),
             srsControls: document.getElementById('srs-controls'),
             srsRatingGroup: document.getElementById('srs-rating-group'),
@@ -571,7 +570,7 @@
                 ui.flashcardFront.innerHTML = `
                     <div id="card-front-content" class="text-center p-4">
                          <div class="flex items-center justify-center gap-3">
-                            <h2 class="text-5xl font-bold break-words text-slate-800">${wordKey}</h2>
+                            <h2 class="text-4xl md:text-5xl font-bold break-words text-slate-800">${wordKey}</h2>
                             <button id="front-audio-btn" class="play-audio-btn text-blue-500">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path></svg>
                             </button>
@@ -1181,5 +1180,3 @@
     </script>
 </body>
 </html>
-
-
