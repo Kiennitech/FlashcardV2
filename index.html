@@ -33,6 +33,29 @@
         .progress-dot:hover { transform: scale(1.5); }
         #toast-notification { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background-color: #2d3748; color: white; padding: 12px 24px; border-radius: 8px; z-index: 100; opacity: 0; visibility: hidden; transition: opacity 0.3s, visibility 0.3s, transform 0.3s; }
         #toast-notification.show { opacity: 1; visibility: visible; transform: translate(-50%, -10px); }
+        .card-nav-btn {
+            position: absolute;
+            bottom: 1rem;
+            width: 3rem;
+            height: 3rem;
+            background-color: rgba(0, 0, 0, 0.2);
+            color: white;
+            border-radius: 9999px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            opacity: 0;
+            transition: opacity 0.3s ease-in-out, background-color 0.2s;
+            pointer-events: none;
+        }
+        .card-nav-btn.visible {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        .card-nav-btn:hover {
+            background-color: rgba(0, 0, 0, 0.4);
+        }
     </style>
 </head>
 <body class="flex flex-col items-center">
@@ -50,11 +73,16 @@
                         <div id="card-back-content" class="text-left w-full h-full"></div>
                     </div>
                 </div>
-                <!-- Card counter moved here for positioning -->
+                <!-- Card counter -->
                 <div id="card-counter" class="absolute bottom-4 left-1/2 -translate-x-1/2 bg-black bg-opacity-50 text-white text-sm font-semibold px-3 py-1 rounded-full opacity-0 transition-opacity duration-300 pointer-events-none">0 / 0</div>
+                <!-- Card navigation buttons -->
+                <button id="card-prev-btn" class="card-nav-btn left-4">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z"/></svg>
+                </button>
+                <button id="card-next-btn" class="card-nav-btn right-4">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708z"/></svg>
+                </button>
             </div>
-
-            <!-- Navigation controls removed -->
             
             <div id="srs-controls" class="flex flex-col items-center justify-center w-full my-8 space-y-4">
                 <div id="srs-rating-group" class="w-full items-center justify-center space-x-2 flex invisible opacity-0 transition-opacity duration-300 ease-in-out">
@@ -64,14 +92,17 @@
                 </div>
 
                 <div id="action-buttons-group" class="flex items-center justify-center gap-3">
+                    <button id="back-to-learn-btn" class="hidden animated-button p-4 bg-white text-slate-600 rounded-xl" title="Quay lại học">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+                    </button>
                     <button id="shuffle-btn" class="hidden animated-button p-4 bg-white text-slate-600 rounded-xl" title="Xáo trộn danh sách từ">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 3 21 3 21 8"></polyline><line x1="4" y1="20" x2="21" y2="3"></line><polyline points="21 16 21 21 16 21"></polyline><line x1="15" y1="15" x2="21" y2="21"></line><line x1="4" y1="4" x2="9" y2="9"></line></svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 3 21 3 21 8"></polyline><line x1="4" y1="20" x2="21" y2="3"></line><polyline points="21 16 21 21 16 21"></polyline><line x1="15" y1="15" x2="21" y2="21"></line><line x1="4" y1="4" x2="9" y2="9"></line></svg>
                     </button>
                      <button id="topic-progress-btn" class="hidden animated-button p-4 bg-white text-slate-600 rounded-xl" title="Tiến độ Chủ đề">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-pie-chart"><path d="M21.21 15.89A10 10 0 1 1 8 2.83"/><path d="M22 12A10 10 0 0 0 12 2v10z"/></svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-pie-chart"><path d="M21.21 15.89A10 10 0 1 1 8 2.83"/><path d="M22 12A10 10 0 0 0 12 2v10z"/></svg>
                     </button>
                     <button id="progress-matrix-btn" class="animated-button p-4 bg-white text-slate-600 rounded-xl" title="Tiến độ học tập tổng quát">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
                     </button>
                 </div>
             </div>
@@ -83,14 +114,16 @@
                 <div class="flex items-center gap-3">
                     <button id="topic-review-btn" class="hidden animated-button flex-1 px-4 py-2 bg-cyan-500 hover:bg-cyan-600 text-white font-semibold rounded-lg flex flex-col items-center justify-center disabled:bg-slate-300 disabled:transform-none disabled:shadow-none text-sm" title="Ôn tập các từ đã học trong chủ đề này">
                         <div class="flex items-center gap-2">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+                            <!-- Corrected Checkmark Icon -->
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
                             <span>Ôn tập Chủ đề</span>
                         </div>
                         <span class="text-xs font-normal opacity-80">(<span class="font-bold">0</span>)</span>
                     </button>
                     <button id="srs-review-btn" class="animated-button flex-1 px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white font-semibold rounded-lg flex flex-col items-center justify-center disabled:bg-slate-300 disabled:transform-none disabled:shadow-none text-sm" title="Ôn tập các từ đã học theo phương pháp lặp lại ngắt quãng">
                         <div class="flex items-center gap-2">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path></svg>
+                            <!-- Corrected Star Icon -->
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
                             <span>Ôn tập Chung</span>
                         </div>
                         <span class="text-xs font-normal opacity-80">(<span class="font-bold">0</span>)</span>
@@ -172,7 +205,8 @@
         let speechSynth = window.speechSynthesis;
         let availableVoices = [];
         let voicesLoaded = false;
-        let counterTimeout = null; // Timeout for hiding the card counter
+        let transientControlsTimeout = null;
+        let lastProgressViewCategory = null; // To track which progress view is open
 
         // --- UI ELEMENT REFERENCES ---
         const ui = {
@@ -182,6 +216,8 @@
             srsControls: document.getElementById('srs-controls'),
             srsRatingGroup: document.getElementById('srs-rating-group'),
             cardCounter: document.getElementById('card-counter'),
+            cardPrevBtn: document.getElementById('card-prev-btn'),
+            cardNextBtn: document.getElementById('card-next-btn'),
             categorySelect: document.getElementById('category-select'),
             srsReviewBtn: document.getElementById('srs-review-btn'),
             topicReviewBtn: document.getElementById('topic-review-btn'),
@@ -196,6 +232,7 @@
             closeProgressMatrixBtn: document.getElementById('close-progress-matrix-btn'),
             progressGridContainer: document.getElementById('progress-grid-container'),
             shuffleBtn: document.getElementById('shuffle-btn'),
+            backToLearnBtn: document.getElementById('back-to-learn-btn'),
             toast: document.getElementById('toast-notification'),
             resetProgressBtn: document.getElementById('reset-progress-btn'),
             confirmModal: document.getElementById('confirm-modal'),
@@ -213,7 +250,7 @@
             statsEasyPercent: document.getElementById('stats-easy-percent'),
         };
         
-        const speakerIconSVG = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-volume-2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/></svg>`;
+        const speakerIconSVG = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-volume-2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/></svg>`;
         const loadingIconSVG = `<div class="loader"></div>`;
 
         // --- CORE FUNCTIONS ---
@@ -341,12 +378,26 @@
         function updateControlVisibility() {
             const showTopicProgress = currentMode === MODES.LEARN || currentMode === MODES.TOPIC_REVIEW;
             const hasMultipleWords = currentWords.length > 1;
+            const isLearnMode = currentMode === MODES.LEARN;
+            const isReviewMode = currentMode === MODES.TOPIC_REVIEW || currentMode === MODES.GLOBAL_REVIEW;
 
             ui.srsControls.style.display = 'flex';
-            ui.shuffleBtn.classList.toggle('hidden', !hasMultipleWords);
-            ui.shuffleBtn.classList.toggle('flex', hasMultipleWords);
+            ui.shuffleBtn.classList.toggle('hidden', !hasMultipleWords || isReviewMode);
+            ui.shuffleBtn.classList.toggle('flex', hasMultipleWords && !isReviewMode);
             ui.topicProgressBtn.classList.toggle('hidden', !showTopicProgress);
             ui.topicProgressBtn.classList.toggle('flex', showTopicProgress);
+            ui.progressMatrixBtn.classList.toggle('hidden', isReviewMode);
+            ui.progressMatrixBtn.classList.toggle('flex', !isReviewMode);
+
+            ui.backToLearnBtn.classList.toggle('hidden', !isReviewMode);
+            ui.backToLearnBtn.classList.toggle('flex', isReviewMode);
+            
+            if (isLearnMode && hasMultipleWords) {
+                showTransientControls();
+            } else {
+                hideTransientControls();
+            }
+
             updateReviewButtons();
         }
 
@@ -384,7 +435,10 @@
 
         function startSession(mode, categoryKey, customWordList = null, resumeIndex = null) {
             currentMode = mode;
-            currentCategoryKey = categoryKey;
+            // Don't change the main category key if we're in a global review
+            if (mode !== MODES.GLOBAL_REVIEW) {
+                currentCategoryKey = categoryKey;
+            }
             
             if (mode === MODES.LEARN) {
                 currentWords = vocabularyData[categoryKey] ? Object.keys(vocabularyData[categoryKey]) : [];
@@ -562,14 +616,23 @@
             }, 150);
         }
 
-        function showCardCounter() {
-            if (counterTimeout) {
-                clearTimeout(counterTimeout);
+        function showTransientControls() {
+            if (transientControlsTimeout) {
+                clearTimeout(transientControlsTimeout);
             }
-            ui.cardCounter.classList.remove('opacity-0');
-            counterTimeout = setTimeout(() => {
-                ui.cardCounter.classList.add('opacity-0');
-            }, 1200);
+            ui.cardCounter.classList.add('visible');
+            ui.cardPrevBtn.classList.add('visible');
+            ui.cardNextBtn.classList.add('visible');
+
+            transientControlsTimeout = setTimeout(() => {
+                hideTransientControls();
+            }, 2000);
+        }
+
+        function hideTransientControls() {
+            ui.cardCounter.classList.remove('visible');
+            ui.cardPrevBtn.classList.remove('visible');
+            ui.cardNextBtn.classList.remove('visible');
         }
 
         function updateNavigation() {
@@ -745,7 +808,7 @@
                 }
 
                 displayCard();
-                showCardCounter();
+                showTransientControls();
             }
         }
 
@@ -770,8 +833,13 @@
                     localStorage.removeItem(SRS_PROGRESS_KEY);
                     localStorage.removeItem(TOPIC_PROGRESS_KEY);
                     clearLastSession();
+                    
+                    // *** FIX: Update the progress matrix view immediately ***
+                    updateProgressMatrixAndStats(lastProgressViewCategory);
+                    
                     updateReviewButtons();
                     showToast("Đã xóa toàn bộ tiến trình học tập.");
+                    
                     const firstCategory = Object.keys(vocabularyData)[0] || null;
                     if (firstCategory) {
                         startSession(MODES.LEARN, firstCategory);
@@ -868,42 +936,11 @@
                 }
             });
             
-            let touchstartX = 0, touchstartY = 0;
-            ui.flashcard.addEventListener('touchstart', e => {
-                touchstartX = e.changedTouches[0].screenX;
-                touchstartY = e.changedTouches[0].screenY;
-            }, { passive: true });
-
-            // *** MODIFICATION START: Improved touch handling ***
-            ui.flashcard.addEventListener('touchend', e => {
-                const touchendX = e.changedTouches[0].screenX;
-                const touchendY = e.changedTouches[0].screenY;
-                const deltaX = touchendX - touchstartX;
-                const deltaY = touchendY - touchstartY;
-                const swipeThreshold = 50; // Ngưỡng tối thiểu cho một lần vuốt
-
-                // Ưu tiên cuộn dọc: nếu di chuyển theo chiều dọc nhiều hơn chiều ngang, bỏ qua.
-                // Điều này ngăn việc vuốt thẻ khi người dùng đang cố gắng cuộn trang.
-                if (Math.abs(deltaY) > Math.abs(deltaX)) {
-                    return;
-                }
-
-                // Chỉ xử lý vuốt ngang nếu nó vượt qua ngưỡng
-                if (Math.abs(deltaX) > swipeThreshold) {
-                    if (currentMode === MODES.LEARN) {
-                        if (deltaX < 0) navigate(1); // Vuốt sang trái
-                        if (deltaX > 0) navigate(-1); // Vuốt sang phải
-                    }
-                    // Rất quan trọng: Ngăn sự kiện 'click' được kích hoạt sau khi vuốt,
-                    // tránh việc thẻ bị lật ngay sau khi chuyển.
-                    e.preventDefault();
-                }
-                // Nếu không phải là vuốt, sự kiện 'click' mặc định sẽ xử lý việc lật thẻ.
-            });
-            // *** MODIFICATION END ***
+            ui.cardPrevBtn.addEventListener('click', (e) => { e.stopPropagation(); navigate(-1); });
+            ui.cardNextBtn.addEventListener('click', (e) => { e.stopPropagation(); navigate(1); });
 
             ui.flashcard.addEventListener('click', (e) => {
-                if (e.target.closest('.card-action-btn') || e.target.closest('.play-audio-btn') || e.target.closest('#review-again-btn')) {
+                if (e.target.closest('.card-action-btn') || e.target.closest('.play-audio-btn') || e.target.closest('#review-again-btn') || e.target.closest('.card-nav-btn')) {
                     return;
                 }
                 if (currentWords.length > 0 && currentIndex < currentWords.length) {
@@ -936,18 +973,24 @@
                 }
             });
             
+            ui.backToLearnBtn.addEventListener('click', () => {
+                startSession(MODES.LEARN, currentCategoryKey);
+            });
+
             ui.closeErrorModalBtn.addEventListener('click', () => {
                 ui.errorModal.classList.add('hidden');
                 unlockBodyScroll();
             });
             
             ui.progressMatrixBtn.addEventListener('click', () => {
-                updateProgressMatrixAndStats(); // Global progress
+                lastProgressViewCategory = null; // Track that global view is open
+                updateProgressMatrixAndStats();
                 ui.progressMatrixModal.classList.remove('hidden');
                 lockBodyScroll();
             });
             ui.topicProgressBtn.addEventListener('click', () => {
-                updateProgressMatrixAndStats(currentCategoryKey); // Topic progress
+                lastProgressViewCategory = currentCategoryKey; // Track that topic view is open
+                updateProgressMatrixAndStats(currentCategoryKey);
                 ui.progressMatrixModal.classList.remove('hidden');
                 lockBodyScroll();
             });
