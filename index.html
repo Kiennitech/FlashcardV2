@@ -2,7 +2,7 @@
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Flashcard TOEIC - Lặp lại ngắt quãng</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -36,21 +36,19 @@
         .card-nav-btn {
             position: absolute;
             bottom: 1rem;
-            width: 3rem;
+            width: 3rem; /* Maintain touch area */
             height: 3rem;
-            background-color: rgba(0, 0, 0, 0.2);
-            color: white;
-            border-radius: 9999px;
+            background-color: transparent; /* No background */
+            color: #d1d5db; /* Light grey color (Tailwind gray-300) */
             display: flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            opacity: 0.3; /* Start semi-transparent */
-            transition: opacity 0.3s ease-in-out, background-color 0.2s;
-            pointer-events: auto; /* Always clickable */
+            transition: color 0.2s ease-in-out;
+            pointer-events: auto;
         }
-        .flashcard-container:hover .card-nav-btn {
-            opacity: 1; /* Become fully visible on hover */
+        .card-nav-btn:hover {
+            color: #9ca3af; /* Darker grey on hover (Tailwind gray-400) */
         }
         .card-nav-btn.hidden {
             opacity: 0 !important;
@@ -80,10 +78,10 @@
                 <div id="card-counter" class="absolute bottom-4 left-1/2 -translate-x-1/2 bg-black bg-opacity-50 text-white text-sm font-semibold px-3 py-1 rounded-full opacity-0 transition-opacity duration-300 pointer-events-none">0 / 0</div>
                 <!-- Card navigation buttons -->
                 <button id="card-prev-btn" class="card-nav-btn left-4 hidden">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z"/></svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z"/></svg>
                 </button>
                 <button id="card-next-btn" class="card-nav-btn right-4 hidden">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708z"/></svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708z"/></svg>
                 </button>
             </div>
             
