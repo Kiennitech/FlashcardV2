@@ -103,7 +103,7 @@
             
             <div id="srs-controls" class="flex flex-col items-center justify-center w-full my-8 space-y-4">
                 <div id="srs-rating-group" class="w-full items-center justify-around space-x-2 flex invisible opacity-0 transition-opacity duration-300 ease-in-out bg-white p-2 rounded-2xl shadow-sm">
-                   <!-- New SRS Icon Buttons -->
+                   <!-- FIX: Corrected viewBox attribute for all SVGs -->
                    <button data-rating="easy" class="srs-icon-btn srs-rating-btn">
                        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M8 14s1.5 2 4 2 4-2 4-2"></path><line x1="9" y1="9" x2="9.01" y2="9"></line><line x1="15" y1="9" x2="15.01" y2="9"></line></svg>
                        <span class="text-sm font-medium text-green-600">Dễ</span>
@@ -133,7 +133,7 @@
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-pie-chart"><path d="M21.21 15.89A10 10 0 1 1 8 2.83"/><path d="M22 12A10 10 0 0 0 12 2v10z"/></svg>
                     </button>
                     <button id="progress-matrix-btn" class="animated-button p-4 bg-white text-slate-600 rounded-xl" title="Tiến độ học tập tổng quát">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
                     </button>
                 </div>
             </div>
@@ -238,7 +238,8 @@
         let availableVoices = [];
         let voicesLoaded = false;
         let counterTimeout = null;
-        let lastProgressViewCategory = null; // To track which progress view is open
+        let lastProgressViewCategory = null; 
+        let userHasInteracted = false; // Flag to check for first user interaction
 
         // --- UI ELEMENT REFERENCES ---
         const ui = {
@@ -285,7 +286,7 @@
             statsKnownPercent: document.getElementById('stats-known-percent'),
         };
         
-        const speakerIconSVG = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-volume-2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/></svg>`;
+        const speakerIconSVG = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-volume-2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/></svg>`;
         const loadingIconSVG = `<div class="loader"></div>`;
 
         // --- CORE FUNCTIONS ---
@@ -673,7 +674,7 @@
                 updateControlVisibility();
                 if (currentMode !== MODES.GLOBAL_REVIEW) saveLastSession();
 
-                if (currentMode === MODES.LEARN) {
+                if (currentMode === MODES.LEARN && userHasInteracted) {
                     playAudio(wordKey, null);
                 }
             }, 150);
@@ -1013,6 +1014,10 @@
 
             // --- Event Listeners ---
             document.addEventListener('keydown', (e) => {
+                if (['ArrowUp', 'ArrowDown'].includes(e.key)) {
+                    e.preventDefault();
+                    ui.flashcard.click();
+                }
                 if (currentMode !== MODES.LEARN) return;
                 if (e.key === 'ArrowLeft') {
                     navigate(-1);
@@ -1145,6 +1150,14 @@
             }
         }
 
+        function handleFirstInteraction() {
+            userHasInteracted = true;
+            // Auto-play the audio for the very first card shown
+            if (currentMode === MODES.LEARN && currentWords.length > 0) {
+                playAudio(currentWords[currentIndex], null);
+            }
+        }
+
         // --- APP START ---
         document.addEventListener('DOMContentLoaded', () => {
             document.addEventListener('touchmove', function (event) {
@@ -1162,6 +1175,8 @@
                 lastTouchEnd = now;
             }, false);
 
+            document.addEventListener('click', handleFirstInteraction, { once: true });
+            document.addEventListener('keydown', handleFirstInteraction, { once: true });
 
             loadVoices();
             if (speechSynthesis.onvoiceschanged !== undefined) {
