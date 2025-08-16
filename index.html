@@ -673,7 +673,7 @@
                 updateControlVisibility();
                 if (currentMode !== MODES.GLOBAL_REVIEW) saveLastSession();
 
-                if (currentMode === MODES.LEARN && userHasInteracted) {
+                if (userHasInteracted) {
                     playAudio(wordKey, null);
                 }
             }, 150);
@@ -1152,7 +1152,7 @@
         function handleFirstInteraction() {
             userHasInteracted = true;
             // Auto-play the audio for the very first card shown
-            if (currentMode === MODES.LEARN && currentWords.length > 0) {
+            if (currentWords.length > 0) {
                 playAudio(currentWords[currentIndex], null);
             }
         }
