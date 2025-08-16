@@ -45,16 +45,19 @@
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            opacity: 0;
+            opacity: 0.3; /* Start semi-transparent */
             transition: opacity 0.3s ease-in-out, background-color 0.2s;
-            pointer-events: none;
+            pointer-events: auto; /* Always clickable */
         }
-        .card-nav-btn.visible {
+        .flashcard-container:hover .card-nav-btn {
+            opacity: 1; /* Become fully visible on hover */
+        }
+        .card-nav-btn.hidden {
+            opacity: 0 !important;
+            pointer-events: none !important;
+        }
+        #card-counter.visible {
             opacity: 1;
-            pointer-events: auto;
-        }
-        .card-nav-btn:hover {
-            background-color: rgba(0, 0, 0, 0.4);
         }
     </style>
 </head>
@@ -76,10 +79,10 @@
                 <!-- Card counter -->
                 <div id="card-counter" class="absolute bottom-4 left-1/2 -translate-x-1/2 bg-black bg-opacity-50 text-white text-sm font-semibold px-3 py-1 rounded-full opacity-0 transition-opacity duration-300 pointer-events-none">0 / 0</div>
                 <!-- Card navigation buttons -->
-                <button id="card-prev-btn" class="card-nav-btn left-4">
+                <button id="card-prev-btn" class="card-nav-btn left-4 hidden">
                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z"/></svg>
                 </button>
-                <button id="card-next-btn" class="card-nav-btn right-4">
+                <button id="card-next-btn" class="card-nav-btn right-4 hidden">
                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708z"/></svg>
                 </button>
             </div>
@@ -205,7 +208,7 @@
         let speechSynth = window.speechSynthesis;
         let availableVoices = [];
         let voicesLoaded = false;
-        let transientControlsTimeout = null;
+        let counterTimeout = null;
         let lastProgressViewCategory = null; // To track which progress view is open
 
         // --- UI ELEMENT REFERENCES ---
@@ -250,7 +253,7 @@
             statsEasyPercent: document.getElementById('stats-easy-percent'),
         };
         
-        const speakerIconSVG = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-volume-2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/></svg>`;
+        const speakerIconSVG = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-volume-2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/></svg>`;
         const loadingIconSVG = `<div class="loader"></div>`;
 
         // --- CORE FUNCTIONS ---
@@ -387,22 +390,18 @@
             // Logic for action buttons
             ui.shuffleBtn.classList.toggle('hidden', isReviewMode || !hasMultipleWords);
             ui.topicProgressBtn.classList.toggle('hidden', !showTopicProgress);
-            // *** FIX: Show progress matrix button in topic review as well ***
             ui.progressMatrixBtn.classList.toggle('hidden', isGlobalReviewMode);
             ui.backToLearnBtn.classList.toggle('hidden', !isReviewMode);
 
-            // Group visibility based on children
             const actionGroup = document.getElementById('action-buttons-group');
             const isAnyActionVisible = Array.from(actionGroup.children).some(child => !child.classList.contains('hidden'));
             actionGroup.classList.toggle('hidden', !isAnyActionVisible);
             actionGroup.classList.toggle('flex', isAnyActionVisible);
 
-            // Logic for transient controls (arrows, counter)
-            if (isLearnMode && hasMultipleWords) {
-                showTransientControls();
-            } else {
-                hideTransientControls();
-            }
+            // Logic for navigation buttons
+            const showNavButtons = isLearnMode && hasMultipleWords;
+            ui.cardPrevBtn.classList.toggle('hidden', !showNavButtons);
+            ui.cardNextBtn.classList.toggle('hidden', !showNavButtons);
 
             updateReviewButtons();
         }
@@ -441,7 +440,6 @@
 
         function startSession(mode, categoryKey, customWordList = null, resumeIndex = null) {
             currentMode = mode;
-            // Don't change the main category key if we're in a global review
             if (mode !== MODES.GLOBAL_REVIEW) {
                 currentCategoryKey = categoryKey;
             }
@@ -622,23 +620,14 @@
             }, 150);
         }
 
-        function showTransientControls() {
-            if (transientControlsTimeout) {
-                clearTimeout(transientControlsTimeout);
+        function showCardCounter() {
+            if (counterTimeout) {
+                clearTimeout(counterTimeout);
             }
             ui.cardCounter.classList.add('visible');
-            ui.cardPrevBtn.classList.add('visible');
-            ui.cardNextBtn.classList.add('visible');
-
-            transientControlsTimeout = setTimeout(() => {
-                hideTransientControls();
-            }, 2000);
-        }
-
-        function hideTransientControls() {
-            ui.cardCounter.classList.remove('visible');
-            ui.cardPrevBtn.classList.remove('visible');
-            ui.cardNextBtn.classList.remove('visible');
+            counterTimeout = setTimeout(() => {
+                ui.cardCounter.classList.remove('visible');
+            }, 1200);
         }
 
         function updateNavigation() {
@@ -814,7 +803,7 @@
                 }
 
                 displayCard();
-                showTransientControls();
+                showCardCounter();
             }
         }
 
@@ -840,7 +829,6 @@
                     localStorage.removeItem(TOPIC_PROGRESS_KEY);
                     clearLastSession();
                     
-                    // *** FIX: Update the progress matrix view immediately ***
                     updateProgressMatrixAndStats(lastProgressViewCategory);
                     
                     updateReviewButtons();
@@ -946,7 +934,6 @@
             ui.cardNextBtn.addEventListener('click', (e) => { e.stopPropagation(); navigate(1); });
 
             ui.flashcard.addEventListener('click', (e) => {
-                // *** FIX: Added .srs-rating-btn to the exclusion list to prevent flipping when rating a card ***
                 if (e.target.closest('.play-audio-btn') || e.target.closest('#review-again-btn') || e.target.closest('.card-nav-btn') || e.target.closest('.srs-rating-btn')) {
                     return;
                 }
