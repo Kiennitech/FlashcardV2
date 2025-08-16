@@ -16,7 +16,7 @@
         .flashcard { width: 100%; height: 100%; position: relative; transform-style: preserve-3d; transition: transform 0.7s cubic-bezier(0.4, 0.0, 0.2, 1); cursor: pointer; }
         .flashcard.is-flipped { transform: rotateY(-180deg); }
         .flashcard-face { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; -webkit-backface-visibility: hidden; display: flex; flex-direction: column; justify-content: center; align-items: center; border-radius: 1.5rem; box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.07), 0 4px 6px -4px rgb(0 0 0 / 0.1); padding: 1.5rem; border: 1px solid rgba(0,0,0,0.05); }
-        .flashcard-front { background-color: white; color: #111827; }
+        .flashcard-front { background-color: white; color: #111827; justify-content: space-between; }
         .flashcard-back { background-color: #f8fafc; color: #0f172a; transform: rotateY(-180deg); overflow-y: auto; justify-content: flex-start; }
         .animated-button { transition: all 0.2s cubic-bezier(0.4, 0.0, 0.2, 1); box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1); }
         .animated-button:hover { transform: translateY(-2px); box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1); }
@@ -82,9 +82,7 @@
             <div class="flashcard-container w-full h-[35rem] md:h-[45rem] mb-6 relative mt-4">
                 <div id="flashcard" class="flashcard">
                     <div class="flashcard-face flashcard-front">
-                        <div id="card-front-content" class="text-center p-4">
-                            <p class="text-xl text-slate-500">Đang tải dữ liệu từ vựng...</p>
-                        </div>
+                        <!-- Content will be dynamically inserted here -->
                     </div>
                     <div class="flashcard-face flashcard-back">
                         <div id="card-back-content" class="text-left w-full h-full"></div>
@@ -102,24 +100,8 @@
             </div>
             
             <div id="srs-controls" class="flex flex-col items-center justify-center w-full my-8 space-y-4">
-                <div id="srs-rating-group" class="w-full items-center justify-around space-x-2 flex invisible opacity-0 transition-opacity duration-300 ease-in-out bg-white p-2 rounded-2xl shadow-sm">
-                   <button data-rating="easy" class="srs-icon-btn srs-rating-btn">
-                       <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M8 14s1.5 2 4 2 4-2 4-2"></path><line x1="9" y1="9" x2="9.01" y2="9"></line><line x1="15" y1="9" x2="15.01" y2="9"></line></svg>
-                       <span class="text-sm font-medium text-green-600">Dễ</span>
-                   </button>
-                   <button data-rating="good" class="srs-icon-btn srs-rating-btn">
-                       <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="8" y1="15" x2="16" y2="15"></line><line x1="9" y1="9" x2="9.01" y2="9"></line><line x1="15" y1="9" x2="15.01" y2="9"></line></svg>
-                       <span class="text-sm font-medium text-blue-500">Bình thường</span>
-                   </button>
-                   <button data-rating="hard" class="srs-icon-btn srs-rating-btn">
-                       <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M16 16s-1.5-2-4-2-4 2-4 2"></path><line x1="9" y1="9" x2="9.01" y2="9"></line><line x1="15" y1="9" x2="15.01" y2="9"></line></svg>
-                       <span class="text-sm font-medium text-red-500">Khó</span>
-                   </button>
-                   <button id="known-btn" class="srs-icon-btn">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#8b5cf6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 19 22 12 13 5 13 19"></polygon><polygon points="2 19 11 12 2 5 2 19"></polygon></svg>
-                       <span class="text-sm font-medium text-purple-500 text-center">Đã biết</span>
-                   </button>
-                </div>
+                 <!-- This div is now a placeholder, content is moved to the card front -->
+                <div id="srs-rating-group-placeholder"></div>
 
                 <div id="action-buttons-group" class="flex items-center justify-center gap-3">
                     <button id="back-to-learn-btn" class="hidden animated-button p-4 bg-white text-slate-600 rounded-xl" title="Quay lại học">
@@ -144,17 +126,15 @@
                 <div class="flex items-center gap-3">
                     <button id="topic-review-btn" class="hidden animated-button flex-1 px-4 py-2 bg-cyan-500 hover:bg-cyan-600 text-white font-semibold rounded-lg flex flex-col items-center justify-center disabled:bg-slate-300 disabled:transform-none disabled:shadow-none text-sm" title="Ôn tập các từ đã học trong chủ đề này">
                         <div class="flex items-center gap-2">
-                            <!-- Corrected Checkmark Icon -->
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
-                            <span>Ôn tập Chủ đề</span>
+                            <span>Ôn tập theo chủ đề</span>
                         </div>
                         <span class="text-xs font-normal opacity-80">(<span class="font-bold">0</span>)</span>
                     </button>
                     <button id="srs-review-btn" class="animated-button flex-1 px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white font-semibold rounded-lg flex flex-col items-center justify-center disabled:bg-slate-300 disabled:transform-none disabled:shadow-none text-sm" title="Ôn tập các từ đã học theo phương pháp lặp lại ngắt quãng">
                         <div class="flex items-center gap-2">
-                            <!-- Corrected Star Icon -->
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
-                            <span>Ôn tập Chung</span>
+                            <span>Ôn tập tổng quát</span>
                         </div>
                         <span class="text-xs font-normal opacity-80">(<span class="font-bold">0</span>)</span>
                     </button>
@@ -188,7 +168,7 @@
             <div id="progress-stats" class="grid grid-cols-2 md:grid-cols-5 items-center justify-center gap-4 text-xs mb-4">
                 <div class="flex items-center gap-1.5"><div class="w-3 h-3 rounded-sm bg-slate-300"></div><span>Chưa học (<span id="stats-unstudied-count">0</span> - <span id="stats-unstudied-percent">0%</span>)</span></div>
                 <div class="flex items-center gap-1.5"><div class="w-3 h-3 rounded-sm bg-red-500"></div><span>Khó (<span id="stats-hard-count">0</span> - <span id="stats-hard-percent">0%</span>)</span></div>
-                <div class="flex items-center gap-1.5"><div class="w-3 h-3 rounded-sm bg-blue-500"></div><span>Bình thường (<span id="stats-good-count">0</span> - <span id="stats-good-percent">0%</span>)</span></div>
+                <div class="flex items-center gap-1.5"><div class="w-3 h-3 rounded-sm bg-blue-500"></div><span>Trung bình (<span id="stats-good-count">0</span> - <span id="stats-good-percent">0%</span>)</span></div>
                 <div class="flex items-center gap-1.5"><div class="w-3 h-3 rounded-sm bg-green-500"></div><span>Dễ (<span id="stats-easy-count">0</span> - <span id="stats-easy-percent">0%</span>)</span></div>
                 <div class="flex items-center gap-1.5"><div class="w-3 h-3 rounded-sm bg-purple-500"></div><span>Đã biết (<span id="stats-known-count">0</span> - <span id="stats-known-percent">0%</span>)</span></div>
             </div>
@@ -243,10 +223,9 @@
         // --- UI ELEMENT REFERENCES ---
         const ui = {
             flashcard: document.getElementById('flashcard'),
-            cardFrontContent: document.getElementById('card-front-content'),
+            flashcardFront: document.querySelector('.flashcard-face.flashcard-front'),
             cardBackContent: document.getElementById('card-back-content'),
             srsControls: document.getElementById('srs-controls'),
-            srsRatingGroup: document.getElementById('srs-rating-group'),
             cardCounter: document.getElementById('card-counter'),
             cardPrevBtn: document.getElementById('card-prev-btn'),
             cardNextBtn: document.getElementById('card-next-btn'),
@@ -265,7 +244,6 @@
             progressGridContainer: document.getElementById('progress-grid-container'),
             shuffleBtn: document.getElementById('shuffle-btn'),
             backToLearnBtn: document.getElementById('back-to-learn-btn'),
-            knownBtn: document.getElementById('known-btn'),
             toast: document.getElementById('toast-notification'),
             resetProgressBtn: document.getElementById('reset-progress-btn'),
             confirmModal: document.getElementById('confirm-modal'),
@@ -422,17 +400,14 @@
         // --- UI RENDERING AND UPDATES ---
 
         function updateControlVisibility() {
-            const showTopicProgress = currentMode === MODES.LEARN || currentMode === MODES.TOPIC_REVIEW;
             const hasMultipleWords = currentWords.length > 1;
             const isLearnMode = currentMode === MODES.LEARN;
             const isReviewMode = currentMode === MODES.TOPIC_REVIEW || currentMode === MODES.GLOBAL_REVIEW;
             const isGlobalReviewMode = currentMode === MODES.GLOBAL_REVIEW;
 
-            ui.srsControls.style.display = 'flex';
-            
             // Logic for action buttons
             ui.shuffleBtn.classList.toggle('hidden', !hasMultipleWords);
-            ui.topicProgressBtn.classList.toggle('hidden', !showTopicProgress);
+            ui.topicProgressBtn.classList.toggle('hidden', isGlobalReviewMode);
             ui.progressMatrixBtn.classList.toggle('hidden', isGlobalReviewMode);
             ui.backToLearnBtn.classList.toggle('hidden', !isReviewMode);
 
@@ -509,11 +484,9 @@
                 ui.flashcard.classList.remove('is-flipped');
             }
             
-            ui.srsRatingGroup.classList.add('invisible', 'opacity-0');
-
             setTimeout(() => { 
                 if (currentWords.length === 0 || currentIndex >= currentWords.length) {
-                    ui.cardFrontContent.innerHTML = '';
+                    ui.flashcardFront.innerHTML = '';
                     ui.cardBackContent.innerHTML = '';
 
                     let message;
@@ -540,7 +513,7 @@
                         </button>`;
                     }
                     contentHTML += `</div>`;
-                    ui.cardFrontContent.innerHTML = contentHTML;
+                    ui.flashcardFront.innerHTML = contentHTML;
 
                     const reviewAgainBtn = document.getElementById('review-again-btn');
                     if (reviewAgainBtn) {
@@ -558,34 +531,63 @@
                     return;
                 }
 
-                ui.cardFrontContent.innerHTML = '';
+                ui.flashcardFront.innerHTML = '';
                 ui.cardBackContent.innerHTML = '';
 
                 const wordKey = currentWords[currentIndex];
                 const cardData = findWordData(wordKey);
                 
                 if (!cardData) { 
-                    ui.cardFrontContent.innerHTML = `<p class="text-xl text-red-500">Lỗi: Không tìm thấy dữ liệu từ.</p>`; 
+                    ui.flashcardFront.innerHTML = `<p class="text-xl text-red-500">Lỗi: Không tìm thấy dữ liệu từ.</p>`; 
                     updateNavigation();
                     return; 
                 }
 
                 const partsOfSpeech = [...new Set(cardData.meanings.map(m => m.type))].join(', ');
                 const phoneticText = cardData.phonetic ? `/${cardData.phonetic.replace(/\//g, '')}/` : '';
-                ui.cardFrontContent.innerHTML = `
-                    <div class="text-center">
-                        <div class="flex items-center justify-center gap-3">
+                
+                ui.flashcardFront.innerHTML = `
+                    <div id="card-front-content" class="text-center flex-grow flex flex-col justify-center">
+                         <div class="flex items-center justify-center gap-3">
                             <h2 class="text-5xl font-bold break-words text-slate-800">${wordKey}</h2>
                             <button id="front-audio-btn" class="play-audio-btn text-blue-500">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path></svg>
                             </button>
                         </div>
                         <p class="text-xl italic text-slate-500 mt-2">(${partsOfSpeech}) ${phoneticText}</p>
+                    </div>
+                    <div id="srs-rating-group" class="w-full items-center justify-around space-x-2 flex bg-white p-2 rounded-2xl shadow-sm">
+                       <button data-rating="easy" class="srs-icon-btn srs-rating-btn">
+                           <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M8 14s1.5 2 4 2 4-2 4-2"></path><line x1="9" y1="9" x2="9.01" y2="9"></line><line x1="15" y1="9" x2="15.01" y2="9"></line></svg>
+                           <span class="text-sm font-medium text-green-600">Dễ</span>
+                       </button>
+                       <button data-rating="good" class="srs-icon-btn srs-rating-btn">
+                           <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="8" y1="15" x2="16" y2="15"></line><line x1="9" y1="9" x2="9.01" y2="9"></line><line x1="15" y1="9" x2="15.01" y2="9"></line></svg>
+                           <span class="text-sm font-medium text-blue-500">Trung bình</span>
+                       </button>
+                       <button data-rating="hard" class="srs-icon-btn srs-rating-btn">
+                           <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M16 16s-1.5-2-4-2-4 2-4 2"></path><line x1="9" y1="9" x2="9.01" y2="9"></line><line x1="15" y1="9" x2="15.01" y2="9"></line></svg>
+                           <span class="text-sm font-medium text-red-500">Khó</span>
+                       </button>
+                       <button id="known-btn" class="srs-icon-btn">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#8b5cf6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 19 22 12 13 5 13 19"></polygon><polygon points="2 19 11 12 2 5 2 19"></polygon></svg>
+                           <span class="text-sm font-medium text-purple-500 text-center">Đã biết</span>
+                       </button>
                     </div>`;
                 
                 document.getElementById('front-audio-btn').addEventListener('click', (e) => {
                     e.stopPropagation(); // Prevent card from flipping
                     playAudio(wordKey, e.currentTarget);
+                });
+                document.querySelectorAll('.srs-rating-btn').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        handleSrsAnswer(e.currentTarget.dataset.rating);
+                    });
+                });
+                document.getElementById('known-btn').addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    handleKnownAnswer();
                 });
                 
                 const backContentWrapper = document.createElement('div');
@@ -992,7 +994,7 @@
                 return data;
             } catch (error) {
                 console.error('Không thể tải dữ liệu từ vựng:', error);
-                ui.cardFrontContent.innerHTML = `<div class="text-center p-4">
+                ui.flashcardFront.innerHTML = `<div class="text-center p-4">
                     <h2 class="text-2xl font-bold text-red-600 mb-2">Lỗi Tải Dữ Liệu</h2>
                     <p class="text-slate-600">Không thể tải tệp từ vựng. Vui lòng đảm bảo tệp <strong>${url}</strong> tồn tại và có định dạng JSON chính xác.</p>
                     <p class="text-xs text-slate-400 mt-4">Chi tiết lỗi: ${error.message}</p>
@@ -1034,9 +1036,6 @@
                 }
                 if (currentWords.length > 0 && currentIndex < currentWords.length) {
                     ui.flashcard.classList.toggle('is-flipped');
-                    const isFlipped = ui.flashcard.classList.contains('is-flipped');
-                    ui.srsRatingGroup.classList.toggle('invisible', !isFlipped);
-                    ui.srsRatingGroup.classList.toggle('opacity-0', !isFlipped);
                 }
             });
 
@@ -1096,18 +1095,7 @@
 
             ui.shuffleBtn.addEventListener('click', shuffleCurrentQueue);
             ui.resetProgressBtn.addEventListener('click', resetAllProgress);
-
-            document.querySelectorAll('.srs-rating-btn').forEach(btn => {
-                btn.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    handleSrsAnswer(e.currentTarget.dataset.rating);
-                });
-            });
-            ui.knownBtn.addEventListener('click', (e) => {
-                e.stopPropagation();
-                handleKnownAnswer();
-            });
-
+            
             ui.categorySelect.addEventListener('change', (e) => {
                 const selectedKey = e.target.value;
                 startSession(MODES.LEARN, selectedKey);
@@ -1122,7 +1110,7 @@
                 const categoryToLoad = (lastSession && vocabularyData[lastSession.category]) ? lastSession.category : firstCategory;
                 startSession(MODES.LEARN, categoryToLoad);
             } else {
-                 ui.cardFrontContent.innerHTML = `<p class="text-xl text-slate-500">Không có dữ liệu từ vựng nào.</p>`;
+                 ui.flashcardFront.innerHTML = `<p class="text-xl text-slate-500">Không có dữ liệu từ vựng nào.</p>`;
                  updateControlVisibility();
             }
         }
