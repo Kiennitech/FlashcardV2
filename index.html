@@ -63,7 +63,7 @@
 
     <div class="w-full max-w-3xl mx-auto flex flex-col flex-grow">
         <main class="flex-grow">
-            <div class="flashcard-container w-full h-[35rem] md:h-[45rem] mb-6 relative mt-4">
+            <div class="flashcard-container w-full h-[32rem] md:h-[45rem] mb-6 relative mt-4">
                 <div id="flashcard" class="flashcard">
                     <div class="flashcard-face flashcard-front">
                         <div id="card-front-content" class="text-center p-4">
@@ -1050,6 +1050,23 @@
 
         // --- APP START ---
         document.addEventListener('DOMContentLoaded', () => {
+            // *** FIX: Add event listeners to prevent zoom on iOS ***
+            document.addEventListener('touchmove', function (event) {
+                if (event.scale !== 1 && event.scale !== undefined) { 
+                    event.preventDefault(); 
+                }
+            }, { passive: false });
+
+            let lastTouchEnd = 0;
+            document.addEventListener('touchend', function (event) {
+                const now = (new Date()).getTime();
+                if (now - lastTouchEnd <= 300) {
+                    event.preventDefault();
+                }
+                lastTouchEnd = now;
+            }, false);
+
+
             loadVoices();
             if (speechSynthesis.onvoiceschanged !== undefined) {
                 speechSynthesis.onvoiceschanged = loadVoices;
