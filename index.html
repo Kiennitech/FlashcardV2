@@ -18,9 +18,10 @@
         .flashcard-face { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; -webkit-backface-visibility: hidden; display: flex; flex-direction: column; justify-content: center; align-items: center; border-radius: 1.5rem; box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.07), 0 4px 6px -4px rgb(0 0 0 / 0.1); padding: 1.5rem; border: 1px solid rgba(0,0,0,0.05); }
         .flashcard-front { background-color: white; color: #111827; }
         .flashcard-back { background-color: #f8fafc; color: #0f172a; transform: rotateY(-180deg); overflow-y: auto; justify-content: flex-start; }
-        .animated-button { transition: all 0.2s cubic-bezier(0.4, 0.0, 0.2, 1); box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1); }
+        .animated-button { transition: all 0.2s cubic-bezier(0.4, 0.0, 0.2, 1); box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1); -webkit-tap-highlight-color: transparent; }
         .animated-button:hover { transform: translateY(-2px); box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1); }
-        .animated-button:active { transform: translateY(0px); box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1); }
+        .animated-button:active { transform: translateY(0px) scale(0.98); box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1); }
+        .animated-button:focus-visible { outline: none; box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.4); }
         .play-audio-btn { background: none; border: none; padding: 6px; cursor: pointer; transition: all 0.2s; display: inline-flex; vertical-align: middle; color: #0f172a; }
         .play-audio-btn:hover { transform: scale(1.1); color: #0ea5e9; }
         .play-audio-btn.playing, .play-audio-btn:disabled { opacity: 0.5; cursor: not-allowed; }
@@ -36,19 +37,24 @@
         .card-nav-btn {
             position: absolute;
             bottom: 1rem;
-            width: 3rem; /* Maintain touch area */
-            height: 3rem;
-            background-color: transparent; /* No background */
-            color: #d1d5db; /* Light grey color (Tailwind gray-300) */
+            width: 4.5rem; /* Increased touch area */
+            height: 4.5rem; /* Increased touch area */
+            background-color: transparent;
+            color: #d1d5db;
             display: flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
             transition: color 0.2s ease-in-out;
             pointer-events: auto;
+            border-radius: 50%;
+        }
+        .card-nav-btn svg {
+            width: 20px;
+            height: 20px;
         }
         .card-nav-btn:hover {
-            color: #9ca3af; /* Darker grey on hover (Tailwind gray-400) */
+            color: #9ca3af;
         }
         .card-nav-btn.hidden {
             opacity: 0 !important;
@@ -63,15 +69,23 @@
             cursor: pointer;
             padding: 0.5rem;
             border-radius: 0.5rem;
-            transition: background-color 0.2s;
+            transition: background-color 0.2s, transform 0.1s;
             display: flex;
             flex-direction: column;
             align-items: center;
             gap: 0.25rem;
             flex: 1;
+            -webkit-tap-highlight-color: transparent;
         }
         .srs-icon-btn:hover {
             background-color: #f1f5f9;
+        }
+        .srs-icon-btn:focus-visible {
+            outline: none;
+            box-shadow: none;
+        }
+        .srs-icon-btn:active {
+            transform: scale(0.95);
         }
     </style>
 </head>
@@ -90,30 +104,28 @@
                         <div id="card-back-content" class="text-left w-full h-full"></div>
                     </div>
                 </div>
-                <!-- Card counter -->
                 <div id="card-counter" class="absolute bottom-4 left-1/2 -translate-x-1/2 bg-black bg-opacity-50 text-white text-sm font-semibold px-3 py-1 rounded-full opacity-0 transition-opacity duration-300 pointer-events-none">0 / 0</div>
-                <!-- Card navigation buttons -->
-                <button id="card-prev-btn" class="card-nav-btn left-4 hidden">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z"/></svg>
+                <button id="card-prev-btn" class="card-nav-btn left-2 hidden">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z"/></svg>
                 </button>
-                <button id="card-next-btn" class="card-nav-btn right-4 hidden">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708z"/></svg>
+                <button id="card-next-btn" class="card-nav-btn right-2 hidden">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708z"/></svg>
                 </button>
             </div>
             
             <div id="srs-controls" class="flex flex-col items-center justify-center w-full my-8 space-y-4">
                 <div id="srs-rating-group" class="w-full items-center justify-around space-x-2 flex bg-white p-2 rounded-2xl shadow-sm invisible opacity-0 transition-opacity duration-300 ease-in-out">
-                   <button data-rating="easy" class="srs-icon-btn srs-rating-btn">
-                       <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M8 14s1.5 2 4 2 4-2 4-2"></path><line x1="9" y1="9" x2="9.01" y2="9"></line><line x1="15" y1="9" x2="15.01" y2="9"></line></svg>
-                       <span class="text-sm font-medium text-green-600">Dễ</span>
+                   <button data-rating="hard" class="srs-icon-btn srs-rating-btn">
+                       <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M16 16s-1.5-2-4-2-4 2-4 2"></path><line x1="9" y1="9" x2="9.01" y2="9"></line><line x1="15" y1="9" x2="15.01" y2="9"></line></svg>
+                       <span class="text-sm font-medium text-red-500">Khó</span>
                    </button>
                    <button data-rating="good" class="srs-icon-btn srs-rating-btn">
                        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="8" y1="15" x2="16" y2="15"></line><line x1="9" y1="9" x2="9.01" y2="9"></line><line x1="15" y1="9" x2="15.01" y2="9"></line></svg>
                        <span class="text-sm font-medium text-blue-500">Trung bình</span>
                    </button>
-                   <button data-rating="hard" class="srs-icon-btn srs-rating-btn">
-                       <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M16 16s-1.5-2-4-2-4 2-4 2"></path><line x1="9" y1="9" x2="9.01" y2="9"></line><line x1="15" y1="9" x2="15.01" y2="9"></line></svg>
-                       <span class="text-sm font-medium text-red-500">Khó</span>
+                   <button data-rating="easy" class="srs-icon-btn srs-rating-btn">
+                       <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M8 14s1.5 2 4 2 4-2 4-2"></path><line x1="9" y1="9" x2="9.01" y2="9"></line><line x1="15" y1="9" x2="15.01" y2="9"></line></svg>
+                       <span class="text-sm font-medium text-green-600">Dễ</span>
                    </button>
                    <button id="known-btn" class="srs-icon-btn">
                         <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#8b5cf6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 19 22 12 13 5 13 19"></polygon><polygon points="2 19 11 12 2 5 2 19"></polygon></svg>
@@ -128,10 +140,10 @@
                     <button id="shuffle-btn" class="hidden animated-button p-4 bg-white text-slate-600 rounded-xl" title="Xáo trộn danh sách từ">
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 3 21 3 21 8"></polyline><line x1="4" y1="20" x2="21" y2="3"></line><polyline points="21 16 21 21 16 21"></polyline><line x1="15" y1="15" x2="21" y2="21"></line><line x1="4" y1="4" x2="9" y2="9"></line></svg>
                     </button>
-                     <button id="topic-progress-btn" class="hidden animated-button p-4 bg-white text-slate-600 rounded-xl" title="Tiến độ Chủ đề">
+                     <button id="topic-progress-btn" class="hidden animated-button p-4 bg-white text-slate-600 rounded-xl" title="Thống kê theo chủ đề">
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-pie-chart"><path d="M21.21 15.89A10 10 0 1 1 8 2.83"/><path d="M22 12A10 10 0 0 0 12 2v10z"/></svg>
                     </button>
-                    <button id="progress-matrix-btn" class="animated-button p-4 bg-white text-slate-600 rounded-xl" title="Tiến độ học tập tổng quát">
+                    <button id="progress-matrix-btn" class="animated-button p-4 bg-white text-slate-600 rounded-xl" title="Thống kê tổng quát">
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
                     </button>
                 </div>
@@ -152,7 +164,7 @@
                     <button id="srs-review-btn" class="animated-button flex-1 px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white font-semibold rounded-lg flex flex-col items-center justify-center disabled:bg-slate-300 disabled:transform-none disabled:shadow-none text-sm" title="Ôn tập các từ đã học theo phương pháp lặp lại ngắt quãng">
                         <div class="flex items-center gap-2">
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
-                            <span>Ôn tập tổng quát</span>
+                            <span>Luyện tập ngày</span>
                         </div>
                         <span class="text-xs font-normal opacity-80">(<span class="font-bold">0</span>)</span>
                     </button>
@@ -180,7 +192,7 @@
     <div id="progress-matrix-modal" class="modal hidden fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center p-4 z-50">
         <div class="bg-white rounded-2xl shadow-xl p-6 max-w-4xl w-full max-h-[80vh] flex flex-col">
             <div class="flex justify-between items-center mb-4">
-                <h3 id="progress-modal-title" class="text-xl font-bold text-slate-800">Tiến độ học tập</h3>
+                <h3 id="progress-modal-title" class="text-xl font-bold text-slate-800">Thống kê tổng quát</h3>
                 <button id="close-progress-matrix-btn" class="text-slate-500 hover:text-slate-800 text-3xl leading-none">&times;</button>
             </div>
             <div id="progress-stats" class="grid grid-cols-2 md:grid-cols-5 items-center justify-center gap-4 text-xs mb-4">
@@ -215,14 +227,12 @@
         // --- CONSTANTS AND STATE VARIABLES ---
         const SRS_PROGRESS_KEY = "toeicSrsProgressData";
         const LAST_SESSION_KEY = "toeicLastSession";
-        const TOPIC_PROGRESS_KEY = "toeicTopicProgress"; 
-
+        
         const MODES = { LEARN: 'learn', TOPIC_REVIEW: 'topic_review', GLOBAL_REVIEW: 'global_review' };
         let currentMode = MODES.LEARN;
 
         let vocabularyData = {};
         let srsProgressData = {};
-        let topicProgress = {}; 
 
         const SRS_INTERVALS = { 1: 1, 2: 3, 3: 7, 4: 14, 5: 30, 6: 90 };
         const MAX_SRS_LEVEL = Object.keys(SRS_INTERVALS).length;
@@ -236,7 +246,7 @@
         let voicesLoaded = false;
         let counterTimeout = null;
         let lastProgressViewCategory = null; 
-        let userHasInteracted = false; // Flag to check for first user interaction
+        let userHasInteracted = false;
 
         // --- UI ELEMENT REFERENCES ---
         const ui = {
@@ -306,12 +316,12 @@
             if (rating === 'hard') {
                 currentLevel = 1;
             } else if (rating === 'good') {
-                // Stays the same level, but resets the timer
+                 currentLevel = Math.min(MAX_SRS_LEVEL, currentLevel + 1);
             } else if (rating === 'easy') {
-                currentLevel = Math.min(MAX_SRS_LEVEL, currentLevel + 1);
+                currentLevel = Math.min(MAX_SRS_LEVEL, currentLevel + 2);
             }
 
-            const intervalDays = SRS_INTERVALS[currentLevel];
+            const intervalDays = SRS_INTERVALS[currentLevel] || 1;
             const nextReviewDate = new Date();
             nextReviewDate.setDate(nextReviewDate.getDate() + intervalDays);
             
@@ -324,9 +334,9 @@
 
         function markAsKnown(wordKey) {
             const farFutureDate = new Date();
-            farFutureDate.setFullYear(farFutureDate.getFullYear() + 10); // Set review 10 years from now
+            farFutureDate.setFullYear(farFutureDate.getFullYear() + 10);
             srsProgressData[wordKey] = {
-                level: 99, // A special level to indicate "known"
+                level: 99,
                 nextReviewDate: farFutureDate.toISOString()
             };
             saveSrsProgress();
@@ -374,22 +384,6 @@
                 }
             }
         }
-        
-        function loadTopicProgress() {
-            const savedData = localStorage.getItem(TOPIC_PROGRESS_KEY);
-            if (savedData) {
-                try {
-                    topicProgress = JSON.parse(savedData);
-                } catch (e) {
-                    topicProgress = {};
-                }
-            }
-        }
-
-        function saveTopicProgress() {
-            localStorage.setItem(TOPIC_PROGRESS_KEY, JSON.stringify(topicProgress));
-        }
-
 
         function saveLastSession() {
             const sessionData = {
@@ -425,10 +419,9 @@
             const isReviewMode = currentMode === MODES.TOPIC_REVIEW || currentMode === MODES.GLOBAL_REVIEW;
             const isGlobalReviewMode = currentMode === MODES.GLOBAL_REVIEW;
 
-            // Logic for action buttons
-            ui.shuffleBtn.classList.toggle('hidden', !hasMultipleWords);
+            ui.shuffleBtn.classList.toggle('hidden', !hasMultipleWords || !isLearnMode);
             ui.topicProgressBtn.classList.toggle('hidden', isGlobalReviewMode);
-            ui.progressMatrixBtn.classList.toggle('hidden', isGlobalReviewMode);
+            ui.progressMatrixBtn.classList.remove('hidden');
             ui.backToLearnBtn.classList.toggle('hidden', !isReviewMode);
 
             const actionGroup = document.getElementById('action-buttons-group');
@@ -436,8 +429,7 @@
             actionGroup.classList.toggle('hidden', !isAnyActionVisible);
             actionGroup.classList.toggle('flex', isAnyActionVisible);
 
-            // Logic for navigation buttons
-            const showNavButtons = isLearnMode && hasMultipleWords;
+            const showNavButtons = hasMultipleWords;
             ui.cardPrevBtn.classList.toggle('hidden', !showNavButtons);
             ui.cardNextBtn.classList.toggle('hidden', !showNavButtons);
 
@@ -450,16 +442,11 @@
             ui.srsReviewBtn.querySelector('.font-bold').textContent = globalQueue.length;
             ui.srsReviewBtn.disabled = globalQueue.length === 0;
 
-            if (currentMode === MODES.LEARN) {
-                const topicQueue = getTopicReviewQueue(currentCategoryKey);
-                ui.topicReviewBtn.querySelector('.font-bold').textContent = topicQueue.length;
-                ui.topicReviewBtn.disabled = topicQueue.length === 0;
-                ui.topicReviewBtn.classList.remove('hidden');
-                ui.topicReviewBtn.classList.add('flex');
-            } else {
-                ui.topicReviewBtn.classList.add('hidden');
-                ui.topicReviewBtn.classList.remove('flex');
-            }
+            const topicQueue = getTopicReviewQueue(currentCategoryKey);
+            ui.topicReviewBtn.querySelector('.font-bold').textContent = topicQueue.length;
+            ui.topicReviewBtn.disabled = topicQueue.length === 0;
+            ui.topicReviewBtn.classList.toggle('hidden', currentMode !== MODES.LEARN);
+            ui.topicReviewBtn.classList.toggle('flex', currentMode === MODES.LEARN);
         }
 
         function createCategoryDropdown() {
@@ -476,25 +463,23 @@
         }
 
 
-        function startSession(mode, categoryKey, customWordList = null, resumeIndex = null) {
+        function startSession(mode, categoryKey, customWordList = null) {
             currentMode = mode;
-            if (mode !== MODES.GLOBAL_REVIEW) {
-                currentCategoryKey = categoryKey;
-            }
+            currentCategoryKey = categoryKey;
             
             if (mode === MODES.LEARN) {
-                currentWords = vocabularyData[categoryKey] ? Object.keys(vocabularyData[categoryKey]) : [];
-                const savedIndex = topicProgress[categoryKey] || 0;
-                const startFrom = (savedIndex < currentWords.length) ? savedIndex : 0;
-                currentIndex = resumeIndex !== null ? resumeIndex : startFrom;
+                const allWordsInCategory = vocabularyData[categoryKey] ? Object.keys(vocabularyData[categoryKey]) : [];
+                currentWords = allWordsInCategory.filter(word => !srsProgressData.hasOwnProperty(word));
+                currentIndex = 0;
             } else { 
                 currentWords = customWordList || [];
-                currentIndex = resumeIndex !== null ? resumeIndex : 0;
+                currentIndex = 0;
             }
             
-            if (ui.categorySelect.value !== categoryKey && mode === MODES.LEARN) {
+            if (ui.categorySelect.value !== categoryKey) {
                 ui.categorySelect.value = categoryKey; 
             }
+            
             updateControlVisibility();
             displayCard();
         }
@@ -511,23 +496,21 @@
                     ui.srsRatingGroup.classList.add('invisible', 'opacity-0');
 
                     let message;
-                    const isReviewMode = currentMode === MODES.TOPIC_REVIEW || currentMode === MODES.GLOBAL_REVIEW;
-
-                    if (currentIndex >= currentWords.length && currentWords.length > 0) {
-                        message = 'Chúc mừng! Bạn đã hoàn thành phiên ôn tập.';
-                        clearLastSession();
+                    if (currentMode === MODES.LEARN) {
+                        message = 'Chúc mừng! Bạn đã học hết từ mới trong chủ đề này.';
                     } else {
-                        if (currentMode === MODES.LEARN) {
-                            message = 'Chủ đề này chưa có từ nào.';
-                        } else {
-                            message = 'Không có từ nào cần ôn tập trong danh sách này.';
-                        }
+                        message = 'Chúc mừng! Bạn đã hoàn thành phiên ôn tập.';
                     }
+                    
+                    if (currentMode !== MODES.LEARN && getGlobalReviewQueue().length === 0 && getTopicReviewQueue(currentCategoryKey).length === 0) {
+                        message = 'Không có từ nào cần ôn tập.';
+                    }
+
 
                     let contentHTML = `<div class="text-center p-4">
                         <p class="text-xl text-slate-500 mb-6">${message}</p>`;
 
-                    if (isReviewMode && currentIndex >= currentWords.length && currentWords.length > 0) {
+                    if (currentMode !== MODES.LEARN) {
                         contentHTML += `<button id="review-again-btn" class="animated-button px-6 py-3 bg-blue-500 text-white rounded-xl flex items-center gap-2 mx-auto">
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M8 3a5 5 0 1 0 4.546 2.914.5.5 0 0 1 .908-.417A6 6 0 1 1 8 2v1z"/><path d="M8 4.466V.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384L8.41 4.658A.25.25 0 0 1 8 4.466z"/></svg>
                             Ôn tập lại
@@ -539,11 +522,10 @@
                     const reviewAgainBtn = document.getElementById('review-again-btn');
                     if (reviewAgainBtn) {
                         reviewAgainBtn.addEventListener('click', () => {
-                            for (let i = currentWords.length - 1; i > 0; i--) {
-                                const j = Math.floor(Math.random() * (i + 1));
-                                [currentWords[i], currentWords[j]] = [currentWords[j], currentWords[i]];
-                            }
-                            startSession(currentMode, currentCategoryKey, currentWords, 0);
+                            let queue;
+                            if(currentMode === MODES.GLOBAL_REVIEW) queue = getGlobalReviewQueue();
+                            else queue = getTopicReviewQueue(currentCategoryKey);
+                            startSession(currentMode, currentCategoryKey, queue);
                         });
                     }
 
@@ -579,7 +561,7 @@
                     </div>`;
                 
                 document.getElementById('front-audio-btn').addEventListener('click', (e) => {
-                    e.stopPropagation(); // Prevent card from flipping
+                    e.stopPropagation();
                     playAudio(wordKey, e.currentTarget);
                 });
                 
@@ -666,8 +648,7 @@
                 ui.cardBackContent.appendChild(backContentWrapper);
                 updateNavigation();
                 updateControlVisibility();
-                if (currentMode !== MODES.GLOBAL_REVIEW) saveLastSession();
-
+                
                 if (userHasInteracted) {
                     playAudio(wordKey, null);
                 }
@@ -686,17 +667,19 @@
 
         function updateNavigation() {
             const hasWords = currentWords.length > 0;
-            ui.cardCounter.textContent = hasWords ? `${currentIndex + 1}/${currentWords.length}` : "0 / 0";
+            const totalInQueue = currentWords.length;
+            const currentPosition = totalInQueue > 0 ? currentIndex + 1 : 0;
+            ui.cardCounter.textContent = `${currentPosition}/${totalInQueue}`;
         }
 
         function updateProgressMatrixAndStats(categoryKey = null) {
             ui.progressGridContainer.innerHTML = '';
             
             let wordsToShow = [];
-            let title = "Tiến độ học tập tổng quát";
+            let title = "Thống kê tổng quát";
 
             if (categoryKey && vocabularyData[categoryKey]) {
-                title = `Tiến độ chủ đề: ${categoryKey}`;
+                title = `Thống kê chủ đề: ${categoryKey}`;
                 const wordKeys = Object.keys(vocabularyData[categoryKey]);
                 wordsToShow = wordKeys.map(key => ({ key, category: categoryKey }));
             } else {
@@ -715,7 +698,7 @@
             const counts = { unstudied: 0, hard: 0, good: 0, easy: 0, known: 0 };
             const totalWords = wordsToShow.length;
 
-            wordsToShow.forEach(wordInfo => {
+            wordsToShow.sort().forEach(wordInfo => {
                 const dot = document.createElement('div');
                 let dotColorClass = 'bg-slate-300';
                 let dotTitle = `${wordInfo.key}`;
@@ -751,10 +734,11 @@
                     const wordCategory = dot.dataset.category;
                     const wordKey = dot.dataset.wordKey;
                     
-                    const wordIndex = Object.keys(vocabularyData[wordCategory]).indexOf(wordKey);
+                    const allWordsInCat = Object.keys(vocabularyData[wordCategory]);
+                    const wordIndex = allWordsInCat.indexOf(wordKey);
 
                     if (wordIndex !== -1) {
-                        startSession(MODES.LEARN, wordCategory, null, wordIndex);
+                        startSession(MODES.TOPIC_REVIEW, wordCategory, [wordKey]);
                         ui.progressMatrixModal.classList.add('hidden');
                         unlockBodyScroll();
                     }
@@ -777,7 +761,7 @@
         }
         
         function playAudio(text, buttonEl) {
-            if (!text) return;
+            if (!text || !speechSynth) return;
             if (speechSynth.speaking) {
                 speechSynth.cancel();
             }
@@ -839,16 +823,15 @@
             const wordKey = currentWords[currentIndex];
             updateSrsProgress(wordKey, rating);
             
-            if (currentMode === MODES.LEARN) {
-                if (currentIndex + 1 <= currentWords.length) {
-                    topicProgress[currentCategoryKey] = currentIndex + 1;
-                    saveTopicProgress();
-                }
-                navigate(1);
-            } else {
-                currentIndex++;
-                displayCard();
+            currentWords.splice(currentIndex, 1);
+
+            if (currentIndex >= currentWords.length && currentWords.length > 0) {
+                currentIndex = currentWords.length - 1;
             }
+            
+            displayCard();
+            updateNavigation();
+            updateReviewButtons();
         }
 
         function handleKnownAnswer() {
@@ -856,20 +839,15 @@
             const wordKey = currentWords[currentIndex];
             markAsKnown(wordKey);
             
-            if (currentMode === MODES.LEARN) {
-                if (currentIndex + 1 <= currentWords.length) {
-                    topicProgress[currentCategoryKey] = currentIndex + 1;
-                    saveTopicProgress();
-                }
-                navigate(1);
-            } else {
-                // In review mode, remove the word from the current queue and continue
-                currentWords.splice(currentIndex, 1);
-                if (currentIndex >= currentWords.length) {
-                    currentIndex = currentWords.length;
-                }
-                displayCard();
+            currentWords.splice(currentIndex, 1);
+
+            if (currentIndex >= currentWords.length && currentWords.length > 0) {
+                currentIndex = currentWords.length - 1;
             }
+
+            displayCard();
+            updateNavigation();
+            updateReviewButtons();
         }
         
         function navigate(direction) {
@@ -882,11 +860,6 @@
                     newIndex = currentWords.length - 1;
                 }
                 currentIndex = newIndex;
-
-                if (currentMode === MODES.LEARN) {
-                     topicProgress[currentCategoryKey] = currentIndex;
-                     saveTopicProgress();
-                }
 
                 displayCard();
                 showCardCounter();
@@ -910,20 +883,14 @@
                 "Bạn có chắc chắn muốn xóa toàn bộ tiến trình học tập không? Hành động này không thể hoàn tác.",
                 () => {
                     srsProgressData = {};
-                    topicProgress = {};
                     localStorage.removeItem(SRS_PROGRESS_KEY);
-                    localStorage.removeItem(TOPIC_PROGRESS_KEY);
                     clearLastSession();
                     
                     updateProgressMatrixAndStats(lastProgressViewCategory);
-                    
                     updateReviewButtons();
                     showToast("Đã xóa toàn bộ tiến trình học tập.");
                     
-                    const firstCategory = Object.keys(vocabularyData)[0] || null;
-                    if (firstCategory) {
-                        startSession(MODES.LEARN, firstCategory);
-                    }
+                    startSession(MODES.LEARN, currentCategoryKey);
                 }
             );
         }
@@ -1001,18 +968,18 @@
         function initializeApp(data) {
             vocabularyData = data;
             loadSrsProgress();
-            loadTopicProgress();
             
-            createCategoryDropdown();
-            updateReviewButtons();
+            const firstCategory = Object.keys(vocabularyData)[0] || null;
+            currentCategoryKey = firstCategory;
 
+            createCategoryDropdown();
+            
             // --- Event Listeners ---
             document.addEventListener('keydown', (e) => {
-                if (['ArrowUp', 'ArrowDown'].includes(e.key)) {
+                if (['ArrowUp', 'ArrowDown', ' '].includes(e.key)) {
                     e.preventDefault();
                     ui.flashcard.click();
                 }
-                if (currentMode !== MODES.LEARN) return;
                 if (e.key === 'ArrowLeft') {
                     navigate(-1);
                 } else if (e.key === 'ArrowRight') {
@@ -1024,7 +991,7 @@
             ui.cardNextBtn.addEventListener('click', (e) => { e.stopPropagation(); navigate(1); });
 
             ui.flashcard.addEventListener('click', (e) => {
-                if (e.target.closest('.play-audio-btn') || e.target.closest('#review-again-btn') || e.target.closest('.card-nav-btn') || e.target.closest('.srs-icon-btn') || e.target.closest('#front-audio-btn')) {
+                if (e.target.closest('.play-audio-btn, #review-again-btn, .card-nav-btn, .srs-icon-btn, #front-audio-btn')) {
                     return;
                 }
                 if (currentWords.length > 0 && currentIndex < currentWords.length) {
@@ -1035,22 +1002,14 @@
             ui.srsReviewBtn.addEventListener('click', () => {
                 let reviewQueue = getGlobalReviewQueue();
                 if (reviewQueue.length > 0) {
-                    for (let i = reviewQueue.length - 1; i > 0; i--) {
-                        const j = Math.floor(Math.random() * (i + 1));
-                        [reviewQueue[i], reviewQueue[j]] = [reviewQueue[j], reviewQueue[i]];
-                    }
-                    startSession(MODES.GLOBAL_REVIEW, "GLOBAL_REVIEW_MODE", reviewQueue, 0);
+                    startSession(MODES.GLOBAL_REVIEW, "GLOBAL_REVIEW_MODE", reviewQueue);
                 }
             });
 
             ui.topicReviewBtn.addEventListener('click', () => {
                 let reviewQueue = getTopicReviewQueue(currentCategoryKey);
                 if (reviewQueue.length > 0) {
-                     for (let i = reviewQueue.length - 1; i > 0; i--) {
-                        const j = Math.floor(Math.random() * (i + 1));
-                        [reviewQueue[i], reviewQueue[j]] = [reviewQueue[j], reviewQueue[i]];
-                    }
-                    startSession(MODES.TOPIC_REVIEW, currentCategoryKey, reviewQueue, 0);
+                    startSession(MODES.TOPIC_REVIEW, currentCategoryKey, reviewQueue);
                 }
             });
             
@@ -1064,13 +1023,13 @@
             });
             
             ui.progressMatrixBtn.addEventListener('click', () => {
-                lastProgressViewCategory = null; // Track that global view is open
+                lastProgressViewCategory = null;
                 updateProgressMatrixAndStats();
                 ui.progressMatrixModal.classList.remove('hidden');
                 lockBodyScroll();
             });
             ui.topicProgressBtn.addEventListener('click', () => {
-                lastProgressViewCategory = currentCategoryKey; // Track that topic view is open
+                lastProgressViewCategory = currentCategoryKey;
                 updateProgressMatrixAndStats(currentCategoryKey);
                 ui.progressMatrixModal.classList.remove('hidden');
                 lockBodyScroll();
@@ -1107,14 +1066,8 @@
                 startSession(MODES.LEARN, selectedKey);
             });
 
-            const lastSession = loadLastSession();
-            const firstCategory = Object.keys(vocabularyData)[0] || null;
-
-            if (lastSession && vocabularyData[lastSession.category] && lastSession.mode !== MODES.LEARN) {
-                startSession(lastSession.mode, lastSession.category, lastSession.words, lastSession.index);
-            } else if (firstCategory) {
-                const categoryToLoad = (lastSession && vocabularyData[lastSession.category]) ? lastSession.category : firstCategory;
-                startSession(MODES.LEARN, categoryToLoad);
+            if (firstCategory) {
+                startSession(MODES.LEARN, firstCategory);
             } else {
                  ui.flashcardFront.innerHTML = `<p class="text-xl text-slate-500">Không có dữ liệu từ vựng nào.</p>`;
                  updateControlVisibility();
@@ -1137,16 +1090,19 @@
         
         function loadVoices() {
             if (voicesLoaded) return;
-            availableVoices = speechSynthesis.getVoices();
-            if (availableVoices.length > 0) {
-                voicesLoaded = true;
+            try {
+                availableVoices = speechSynthesis.getVoices();
+                if (availableVoices.length > 0) {
+                    voicesLoaded = true;
+                }
+            } catch (e) {
+                console.error("Could not load voices:", e);
             }
         }
 
         function handleFirstInteraction() {
             userHasInteracted = true;
-            // Auto-play the audio for the very first card shown
-            if (currentWords.length > 0) {
+            if (currentWords.length > 0 && currentIndex < currentWords.length) {
                 playAudio(currentWords[currentIndex], null);
             }
         }
