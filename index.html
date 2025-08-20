@@ -12,13 +12,17 @@
         html, body { height: 100%; overflow-x: hidden; }
         body { font-family: 'Inter', sans-serif; background-color: #f1f5f9; padding-top: 1rem; padding-bottom: 1rem; }
         body.modal-open { overflow: hidden; }
+        /* Sửa lỗi hiển thị trên iOS: Loại bỏ hiệu ứng mờ khi chạm vào các nút */
+        button, .animated-button, .srs-icon-btn, .card-nav-btn {
+            -webkit-tap-highlight-color: transparent;
+        }
         .flashcard-container { perspective: 1200px; }
         .flashcard { width: 100%; height: 100%; position: relative; transform-style: preserve-3d; transition: transform 0.7s cubic-bezier(0.4, 0.0, 0.2, 1); cursor: pointer; }
         .flashcard.is-flipped { transform: rotateY(-180deg); }
         .flashcard-face { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; -webkit-backface-visibility: hidden; display: flex; flex-direction: column; justify-content: center; align-items: center; border-radius: 1.5rem; box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.07), 0 4px 6px -4px rgb(0 0 0 / 0.1); padding: 1.5rem; border: 1px solid rgba(0,0,0,0.05); }
         .flashcard-front { background-color: white; color: #111827; }
         .flashcard-back { background-color: #f8fafc; color: #0f172a; transform: rotateY(-180deg); overflow-y: auto; justify-content: flex-start; }
-        .animated-button { transition: all 0.2s cubic-bezier(0.4, 0.0, 0.2, 1); box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1); -webkit-tap-highlight-color: transparent; }
+        .animated-button { transition: all 0.2s cubic-bezier(0.4, 0.0, 0.2, 1); box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1); }
         .animated-button:hover { transform: translateY(-2px); box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1); }
         .animated-button:active { transform: translateY(0px) scale(0.98); box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1); }
         .animated-button:focus-visible { outline: none; box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.4); }
@@ -75,7 +79,6 @@
             align-items: center;
             gap: 0.25rem;
             flex: 1;
-            -webkit-tap-highlight-color: transparent;
         }
         .srs-icon-btn:hover {
             background-color: #f1f5f9;
@@ -469,6 +472,7 @@
             
             if (mode === MODES.LEARN) {
                 const allWordsInCategory = vocabularyData[categoryKey] ? Object.keys(vocabularyData[categoryKey]) : [];
+                // SỬA LỖI: Luôn lọc lại danh sách để chỉ hiển thị các từ chưa học.
                 currentWords = allWordsInCategory.filter(word => !srsProgressData.hasOwnProperty(word));
                 currentIndex = 0;
             } else { 
