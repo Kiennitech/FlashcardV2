@@ -506,7 +506,7 @@
                         if (allWordsInTopic.length > 0 && allWordsInTopic.length === learnedWordsInTopicCount) {
                             message = 'Chủ đề này đã học xong. Chọn "Ôn tập theo chủ đề" hoặc "Luyện tập ngày" để ôn lại.';
                         } else if (allWordsInTopic.length === 0) {
-                            message = 'Chủ đề này chưa có từ nào.';
+                            message = 'Hãy chọn chủ đề để học tập';
                         } else {
                             message = 'Chúc mừng! Bạn đã học hết từ mới trong chủ đề này.';
                         }
@@ -1076,7 +1076,7 @@
             if (firstCategory) {
                 startSession(MODES.LEARN, firstCategory);
             } else {
-                 ui.flashcardFront.innerHTML = `<p class="text-xl text-slate-500">Không có dữ liệu từ vựng nào.</p>`;
+                 ui.flashcardFront.innerHTML = `<p class="text-xl text-slate-500">Hãy chọn chủ đề để học tập</p>`;
                  updateControlVisibility();
             }
         }
