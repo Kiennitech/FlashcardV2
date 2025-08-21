@@ -10,7 +10,14 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         html, body { height: 100%; overflow-x: hidden; }
-        body { font-family: 'Inter', sans-serif; background-color: #f1f5f9; padding-top: 1rem; padding-bottom: 1rem; }
+        body { 
+            font-family: 'Inter', sans-serif; 
+            background-color: #f1f5f9; 
+            padding-top: 1rem; 
+            padding-bottom: 1rem;
+            /* SỬA LỖI IOS: Ngăn chặn double-tap-to-zoom một cách hiệu quả */
+            touch-action: manipulation;
+        }
         body.modal-open { overflow: hidden; }
         button, .animated-button, .srs-icon-btn, .card-nav-btn { -webkit-tap-highlight-color: transparent; }
         .flashcard-container { perspective: 1200px; }
@@ -18,8 +25,21 @@
         .flashcard.is-flipped { transform: rotateY(-180deg); }
         .flashcard-face { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; -webkit-backface-visibility: hidden; display: flex; flex-direction: column; justify-content: center; align-items: center; border-radius: 1.5rem; box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.07), 0 4px 6px -4px rgb(0 0 0 / 0.1); padding: 1.5rem; border: 1px solid rgba(0,0,0,0.05); }
         .flashcard-front { background-color: white; color: #111827; }
-        .flashcard-back { background-color: #f8fafc; color: #0f172a; transform: rotateY(-180deg); overflow-y: auto; justify-content: flex-start; }
-        .animated-button { transition: all 0.2s cubic-bezier(0.4, 0.0, 0.2, 1); box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1); }
+        .flashcard-back { 
+            background-color: #f8fafc; 
+            color: #0f172a; 
+            transform: rotateY(-180deg); 
+            overflow-y: auto; 
+            justify-content: flex-start;
+            /* SỬA LỖI IOS: Bật chế độ cuộn mượt mà (momentum scrolling) */
+            -webkit-overflow-scrolling: touch;
+        }
+        .animated-button { 
+            transition: all 0.2s cubic-bezier(0.4, 0.0, 0.2, 1); 
+            box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+            /* SỬA LỖI IOS: Báo cho trình duyệt biết thuộc tính này sẽ thay đổi để tối ưu hóa */
+            will-change: transform;
+        }
         .animated-button:hover { transform: translateY(-2px); box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1); }
         .animated-button:active { transform: translateY(0px) scale(0.98); box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1); }
         .animated-button:focus-visible { outline: none; box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.4); }
@@ -33,7 +53,7 @@
         .progress-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(16px, 1fr)); gap: 4px; }
         .progress-dot { cursor: pointer; transition: transform 0.1s ease-in-out; }
         .progress-dot:hover { transform: scale(1.5); }
-        #toast-notification { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background-color: #2d3748; color: white; padding: 12px 24px; border-radius: 8px; z-index: 100; opacity: 0; visibility: hidden; transition: opacity 0.3s, visibility 0.3s, transform 0.3s; }
+        #toast-notification { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background-color: #2d3748; color: white; padding: 12px 24px; border-radius: 8px; z-index: 1000; opacity: 0; visibility: hidden; transition: opacity 0.3s, visibility 0.3s, transform 0.3s; }
         #toast-notification.show { opacity: 1; visibility: visible; transform: translate(-50%, -10px); }
         .card-nav-btn { position: absolute; bottom: 1rem; width: 4.5rem; height: 4.5rem; background-color: transparent; color: #d1d5db; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: color 0.2s ease-in-out; pointer-events: auto; border-radius: 50%; }
         .card-nav-btn svg { width: 20px; height: 20px; }
@@ -44,6 +64,13 @@
         .srs-icon-btn:hover { background-color: #f1f5f9; }
         .srs-icon-btn:focus-visible { outline: none; box-shadow: none; }
         .srs-icon-btn:active { transform: scale(0.95); }
+        .topic-modal-item {
+            transition: background-color 0.2s, color 0.2s;
+        }
+        #topic-list-container {
+            /* SỬA LỖI IOS: Bật chế độ cuộn mượt mà (momentum scrolling) */
+            -webkit-overflow-scrolling: touch;
+        }
     </style>
 </head>
 <body class="flex flex-col items-center">
@@ -125,17 +152,34 @@
                         <span class="text-xs font-normal opacity-80">(<span class="font-bold">0</span>)</span>
                     </button>
                 </div>
+                <!-- Nâng cấp: Thay thế dropdown bằng button -->
                 <div class="relative w-full">
-                    <select id="category-select" class="w-full p-2.5 text-sm font-medium text-slate-700 bg-white border border-slate-300 rounded-lg shadow-sm appearance-none focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer" title="Chọn chủ đề để học">
-                    </select>
-                    <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-slate-700">
-                        <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/></svg>
-                    </div>
+                    <button id="open-topic-modal-btn" class="w-full p-2.5 text-sm font-medium text-slate-700 bg-white border border-slate-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer flex justify-between items-center text-left">
+                        <span id="current-topic-display">Chọn một chủ đề...</span>
+                        <svg class="fill-current h-4 w-4 text-slate-700" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/></svg>
+                    </button>
                 </div>
             </div>
         </footer>
     </div>
     
+    <!-- Nâng cấp: Thêm Modal chọn chủ đề -->
+    <div id="topic-select-modal" class="modal hidden fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center p-4 z-50">
+        <div class="bg-white rounded-2xl shadow-xl p-6 max-w-lg w-full max-h-[80vh] flex flex-col">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-xl font-bold text-slate-800">Chọn chủ đề</h3>
+                <button id="close-topic-modal-btn" class="text-slate-500 hover:text-slate-800 text-3xl leading-none">&times;</button>
+            </div>
+            <div class="relative mb-4">
+                <input type="search" id="topic-search-input" placeholder="Tìm kiếm chủ đề..." class="w-full p-2 pl-10 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+            </div>
+            <div id="topic-list-container" class="overflow-y-auto -mr-2 pr-2 space-y-2">
+                <!-- Danh sách chủ đề sẽ được render ở đây -->
+            </div>
+        </div>
+    </div>
+
     <div id="error-modal" class="modal hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
         <div class="bg-white rounded-lg shadow-xl p-6 max-w-sm w-full">
             <h3 id="error-title" class="text-lg font-bold text-red-600 mb-2">Đã xảy ra lỗi</h3>
@@ -205,7 +249,6 @@
         let lastProgressViewCategory = null; 
         let userHasInteracted = false;
 
-        // SỬA LỖI: Khai báo đầy đủ các biến UI
         const ui = {
             flashcard: document.getElementById('flashcard'),
             flashcardFront: document.querySelector('.flashcard-face.flashcard-front'),
@@ -215,7 +258,6 @@
             cardCounter: document.getElementById('card-counter'),
             cardPrevBtn: document.getElementById('card-prev-btn'),
             cardNextBtn: document.getElementById('card-next-btn'),
-            categorySelect: document.getElementById('category-select'),
             srsReviewBtn: document.getElementById('srs-review-btn'),
             topicReviewBtn: document.getElementById('topic-review-btn'),
             errorModal: document.getElementById('error-modal'),
@@ -248,6 +290,12 @@
             statsEasyPercent: document.getElementById('stats-easy-percent'),
             statsKnownCount: document.getElementById('stats-known-count'),
             statsKnownPercent: document.getElementById('stats-known-percent'),
+            openTopicModalBtn: document.getElementById('open-topic-modal-btn'),
+            currentTopicDisplay: document.getElementById('current-topic-display'),
+            topicSelectModal: document.getElementById('topic-select-modal'),
+            closeTopicModalBtn: document.getElementById('close-topic-modal-btn'),
+            topicSearchInput: document.getElementById('topic-search-input'),
+            topicListContainer: document.getElementById('topic-list-container'),
         };
         
         const speakerIconSVG = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-volume-2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/></svg>`;
@@ -396,20 +444,46 @@
             ui.topicReviewBtn.classList.toggle('hidden', currentMode !== MODES.LEARN);
             ui.topicReviewBtn.classList.toggle('flex', currentMode === MODES.LEARN);
         }
+        
+        function renderTopicsInModal(searchTerm = '') {
+            ui.topicListContainer.innerHTML = '';
+            const lowerCaseSearchTerm = searchTerm.toLowerCase();
+            const sortedKeys = Object.keys(categories).sort();
 
-        function createCategoryDropdown() {
-            ui.categorySelect.innerHTML = '';
-            let sortedKeys = Object.keys(categories).sort();
+            const filteredKeys = sortedKeys.filter(key => key.toLowerCase().includes(lowerCaseSearchTerm));
 
-            sortedKeys.forEach((key) => {
+            if (filteredKeys.length === 0) {
+                ui.topicListContainer.innerHTML = `<p class="text-slate-500 text-center py-4">Không tìm thấy chủ đề nào.</p>`;
+                return;
+            }
+
+            filteredKeys.forEach((key) => {
                 const count = categories[key].length;
-                const option = document.createElement('option');
-                option.value = key;
-                option.textContent = `${key} (${count})`;
-                ui.categorySelect.appendChild(option);
+                const item = document.createElement('button');
+                item.className = 'topic-modal-item w-full p-3 text-left rounded-lg hover:bg-blue-50 hover:text-blue-700 flex justify-between items-center';
+                item.dataset.categoryKey = key;
+                
+                const textSpan = document.createElement('span');
+                textSpan.className = 'font-medium';
+                textSpan.textContent = key;
+                
+                const countSpan = document.createElement('span');
+                countSpan.className = 'text-sm bg-slate-200 text-slate-600 px-2 py-0.5 rounded-full';
+                countSpan.textContent = count;
+
+                item.appendChild(textSpan);
+                item.appendChild(countSpan);
+
+                item.addEventListener('click', () => {
+                    const selectedKey = item.dataset.categoryKey;
+                    startSession(MODES.LEARN, selectedKey);
+                    ui.topicSelectModal.classList.add('hidden');
+                    unlockBodyScroll();
+                });
+
+                ui.topicListContainer.appendChild(item);
             });
         }
-
 
         function startSession(mode, categoryKey, customWordList = null) {
             currentMode = mode;
@@ -424,9 +498,8 @@
                 currentIndex = 0;
             }
             
-            if (ui.categorySelect.value !== categoryKey) {
-                ui.categorySelect.value = categoryKey; 
-            }
+            const count = categories[categoryKey] ? categories[categoryKey].length : 0;
+            ui.currentTopicDisplay.textContent = `${categoryKey} (${count})`;
             
             updateControlVisibility();
             displayCard();
@@ -938,7 +1011,7 @@
             const firstCategory = Object.keys(categories)[0] || null;
             currentCategoryKey = firstCategory;
 
-            createCategoryDropdown();
+            renderTopicsInModal();
             
             document.addEventListener('keydown', (e) => {
                 if (['ArrowUp', 'ArrowDown', ' '].includes(e.key)) {
@@ -1026,10 +1099,28 @@
                 }
             });
             
-            ui.categorySelect.addEventListener('change', (e) => {
-                const selectedKey = e.target.value;
-                startSession(MODES.LEARN, selectedKey);
+            ui.openTopicModalBtn.addEventListener('click', () => {
+                ui.topicSelectModal.classList.remove('hidden');
+                lockBodyScroll();
+                ui.topicSearchInput.focus();
             });
+
+            ui.closeTopicModalBtn.addEventListener('click', () => {
+                ui.topicSelectModal.classList.add('hidden');
+                unlockBodyScroll();
+            });
+
+            ui.topicSelectModal.addEventListener('click', (e) => {
+                if (e.target === ui.topicSelectModal) {
+                    ui.topicSelectModal.classList.add('hidden');
+                    unlockBodyScroll();
+                }
+            });
+
+            ui.topicSearchInput.addEventListener('input', (e) => {
+                renderTopicsInModal(e.target.value);
+            });
+
 
             if (firstCategory) {
                 startSession(MODES.LEARN, firstCategory);
@@ -1074,20 +1165,12 @@
 
         // --- APP START ---
         document.addEventListener('DOMContentLoaded', () => {
-            document.addEventListener('touchmove', function (event) {
-                if (event.scale !== 1 && event.scale !== undefined) { 
-                    event.preventDefault(); 
-                }
-            }, { passive: false });
-
+            // SỬA LỖI IOS: Xóa các đoạn mã gây lag
+            /*
+            document.addEventListener('touchmove', function (event) { ... });
             let lastTouchEnd = 0;
-            document.addEventListener('touchend', function (event) {
-                const now = (new Date()).getTime();
-                if (now - lastTouchEnd <= 300) {
-                    event.preventDefault();
-                }
-                lastTouchEnd = now;
-            }, false);
+            document.addEventListener('touchend', function (event) { ... });
+            */
 
             document.addEventListener('click', handleFirstInteraction, { once: true });
             document.addEventListener('keydown', handleFirstInteraction, { once: true });
