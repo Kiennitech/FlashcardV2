@@ -1,422 +1,33 @@
 [
     {
         "category": "Contracts",
+        "word": "abide by",
+        "phonetic": "/əˈbaɪd baɪ/",
+        "meanings": [
+            {
+                "type": "v",
+                "meaning": "tuân theo, tôn trọng",
+                "explanation": "To comply with; to conform.",
+                "examples": [
+                    {
+                        "en": "The two parties agreed to abide by the judge's decision.",
+                        "vi": "Hai bên đã đồng ý tuân theo quyết định của thẩm phán."
+                    },
+                    {
+                        "en": "For years he has abided by a commitment to annual employee raises.",
+                        "vi": "Trong nhiều năm, ông ấy đã tuân thủ cam kết tăng lương nhân viên hàng năm."
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "category": "Contracts",
         "word": "agreement",
         "phonetic": "/əˈɡriːmənt/",
         "meanings": [
             {
-                "type": "(n)",
-                "meaning": "hợp đồng, sự đồng ý",
-                "explanation": "A mutual arrangement, a contract.",
-                "examples": [
-                    {
-                        "en": "The landlord and tenant were in agreement that the rent should be prorated to the middle of the month.",
-                        "vi": "Chủ nhà và người thuê nhà đã thống nhất rằng tiền thuê nhà nên được tính theo tỷ lệ cho đến giữa tháng."
-                    },
-                    {
-                        "en": "According to the agreement, the caterer will also supply the flowers for the event.",
-                        "vi": "Theo thỏa thuận, nhà cung cấp dịch vụ ăn uống cũng sẽ cung cấp hoa cho sự kiện."
-                    }
-                ]
-            }
-        ]
-    },
-    {
-        "category": "Contracts",
-        "word": "agree",
-        "phonetic": "/əˈɡriː/",
-        "meanings": [
-            {
-                "type": "(v)",
-                "meaning": "đồng ý, tán thành",
-                "explanation": "To have the same opinion or to accept a suggestion or idea.",
-                "examples": [
-                    {
-                        "en": "If both parties agree to the terms, we can finalize the contract.",
-                        "vi": "Nếu cả hai bên đồng ý với các điều khoản, chúng ta có thể hoàn tất hợp đồng."
-                    },
-                    {
-                        "en": "The team agreed on a new marketing strategy.",
-                        "vi": "Nhóm đã thống nhất về một chiến lược tiếp thị mới."
-                    }
-                ]
-            }
-        ]
-    },
-    {
-        "category": "Contracts",
-        "word": "assurance",
-        "phonetic": "/əˈʃʊrəns/",
-        "meanings": [
-            {
-                "type": "(n)",
-                "meaning": "sự đảm bảo, sự chắc chắn",
-                "explanation": "A guarantee; confidence.",
-                "examples": [
-                    {
-                        "en": "The sales associate gave his assurance that the missing keyboard would be replaced the next day.",
-                        "vi": "Nhân viên bán hàng đã đảm bảo rằng chiếc bàn phím bị thiếu sẽ được thay thế vào ngày hôm sau."
-                    },
-                    {
-                        "en": "Her self-assurance made it easy to see why she was in charge of the negotiations.",
-                        "vi": "Sự tự tin của cô ấy giúp dễ dàng hiểu tại sao cô ấy lại phụ trách các cuộc đàm phán."
-                    }
-                ]
-            }
-        ]
-    },
-    {
-        "category": "Contracts",
-        "word": "assure",
-        "phonetic": "/əˈʃʊr/",
-        "meanings": [
-            {
-                "type": "(v)",
-                "meaning": "cam đoan, quả quyết",
-                "explanation": "To tell someone confidently that something is true, so that they do not worry.",
-                "examples": [
-                    {
-                        "en": "I can assure you that your package will arrive on time.",
-                        "vi": "Tôi có thể cam đoan với bạn rằng gói hàng của bạn sẽ đến đúng giờ."
-                    },
-                    {
-                        "en": "He assured his clients that their investments were safe.",
-                        "vi": "Anh ấy đã trấn an khách hàng của mình rằng các khoản đầu tư của họ được an toàn."
-                    }
-                ]
-            }
-        ]
-    },
-    {
-        "category": "Contracts",
-        "word": "cancellation",
-        "phonetic": "/ˌkænsəˈleɪʃn/",
-        "meanings": [
-            {
-                "type": "(n)",
-                "meaning": "sự hủy bỏ",
-                "explanation": "Annulment; stopping.",
-                "examples": [
-                    {
-                        "en": "The cancellation of her flight caused her problems for the rest of the week.",
-                        "vi": "Việc chuyến bay của cô ấy bị hủy đã gây ra cho cô ấy nhiều vấn đề trong suốt phần còn lại của tuần."
-                    },
-                    {
-                        "en": "The cancellation clause appears at the back of the contract.",
-                        "vi": "Điều khoản hủy bỏ xuất hiện ở cuối hợp đồng."
-                    }
-                ]
-            }
-        ]
-    },
-    {
-        "category": "Contracts",
-        "word": "cancel",
-        "phonetic": "/ˈkænsəl/",
-        "meanings": [
-            {
-                "type": "(v)",
-                "meaning": "hủy bỏ",
-                "explanation": "To decide that an arranged event will not happen.",
-                "examples": [
-                    {
-                        "en": "The company had to cancel the meeting due to a scheduling conflict.",
-                        "vi": "Công ty đã phải hủy cuộc họp do trùng lịch."
-                    },
-                    {
-                        "en": "Because of the storm, they cancelled the outdoor concert.",
-                        "vi": "Vì cơn bão, họ đã hủy bỏ buổi hòa nhạc ngoài trời."
-                    }
-                ]
-            }
-        ]
-    },
-    {
-        "category": "Contracts",
-        "word": "determine",
-        "phonetic": "/dɪˈtɜːrmɪn/",
-        "meanings": [
-            {
-                "type": "(v)",
-                "meaning": "xác định, quyết định",
-                "explanation": "To find out; to influence.",
-                "examples": [
-                    {
-                        "en": "After reading the contract, I was still unable to determine if our company was liable for damages.",
-                        "vi": "Sau khi đọc hợp đồng, tôi vẫn không thể xác định được liệu công ty của chúng tôi có chịu trách nhiệm về những thiệt hại hay không."
-                    },
-                    {
-                        "en": "The skill of the union bargainers will determine whether the automotive plant will open next week.",
-                        "vi": "Kỹ năng của những người đàm phán của công đoàn sẽ quyết định liệu nhà máy ô tô có mở cửa vào tuần tới hay không."
-                    }
-                ]
-            }
-        ]
-    },
-    {
-        "category": "Contracts",
-        "word": "engage",
-        "phonetic": "/ɪnˈɡeɪdʒ/",
-        "meanings": [
-            {
-                "type": "(v)",
-                "meaning": "tham gia; thuê, mướn",
-                "explanation": "To participate; to involve.",
-                "examples": [
-                    {
-                        "en": "He engaged us in a fascinating discussion about current business law.",
-                        "vi": "Anh ấy đã thu hút chúng tôi vào một cuộc thảo luận hấp dẫn về luật kinh doanh hiện hành."
-                    },
-                    {
-                        "en": "Before engaging in a new business, it is important to do thorough research.",
-                        "vi": "Trước khi tham gia vào một công việc kinh doanh mới, điều quan trọng là phải nghiên cứu kỹ lưỡng."
-                    }
-                ]
-            }
-        ]
-    },
-    {
-        "category": "Contracts",
-        "word": "establish",
-        "phonetic": "/ɪˈstæblɪʃ/",
-        "meanings": [
-            {
-                "type": "(v)",
-                "meaning": "thành lập, thiết lập",
-                "explanation": "To institute permanently; to bring about.",
-                "examples": [
-                    {
-                        "en": "The merger of the two companies established a powerful new corporation.",
-                        "vi": "Việc sáp nhập hai công ty đã tạo nên một tập đoàn mới hùng mạnh."
-                    },
-                    {
-                        "en": "Through her many books, she established herself as an authority on contract law.",
-                        "vi": "Qua nhiều cuốn sách, bà đã khẳng định mình là một chuyên gia về luật hợp đồng."
-                    }
-                ]
-            }
-        ]
-    },
-    {
-        "category": "Contracts",
-        "word": "obligate",
-        "phonetic": "/ˈɒblɪɡeɪt/",
-        "meanings": [
-            {
-                "type": "(v)",
-                "meaning": "bắt buộc, ép buộc",
-                "explanation": "To bind legally or morally.",
-                "examples": [
-                    {
-                        "en": "The contractor was obligated by the contract to work 40 hours a week.",
-                        "vi": "Nhà thầu bị ràng buộc bởi hợp đồng phải làm việc 40 giờ một tuần."
-                    },
-                    {
-                        "en": "I felt obligated to finish the project even though I could have exercised my option to quit.",
-                        "vi": "Tôi cảm thấy có nghĩa vụ phải hoàn thành dự án mặc dù tôi có thể thực hiện quyền lựa chọn nghỉ việc của mình."
-                    }
-                ]
-            }
-        ]
-    },
-    {
-        "category": "Contracts",
-        "word": "obligation",
-        "phonetic": "/ˌɒblɪˈɡeɪʃn/",
-        "meanings": [
-            {
-                "type": "(n)",
-                "meaning": "nghĩa vụ, bổn phận",
-                "explanation": "Something that you must do because it is your duty, or because of a law or promise.",
-                "examples": [
-                    {
-                        "en": "It is our legal obligation to protect our clients' data.",
-                        "vi": "Bảo vệ dữ liệu của khách hàng là nghĩa vụ pháp lý của chúng tôi."
-                    },
-                    {
-                        "en": "The company has an obligation to be honest with its shareholders.",
-                        "vi": "Công ty có nghĩa vụ phải trung thực với các cổ đông của mình."
-                    }
-                ]
-            }
-        ]
-    },
-    {
-        "category": "Contracts",
-        "word": "party",
-        "phonetic": "/ˈpɑːrti/",
-        "meanings": [
-            {
-                "type": "(n)",
-                "meaning": "bên (trong hợp đồng)",
-                "explanation": "A person or group participating in an action or plan.",
-                "examples": [
-                    {
-                        "en": "The parties agreed to a settlement in their contract dispute.",
-                        "vi": "Các bên đã đồng ý một thỏa thuận trong tranh chấp hợp đồng của họ."
-                    },
-                    {
-                        "en": "The party that prepares the contract has a distinct advantage.",
-                        "vi": "Bên soạn thảo hợp đồng có một lợi thế rõ rệt."
-                    }
-                ]
-            }
-        ]
-    },
-    {
-        "category": "Contracts",
-        "word": "provision",
-        "phonetic": "/prəˈvɪʒn/",
-        "meanings": [
-            {
-                "type": "(n)",
-                "meaning": "điều khoản, sự cung cấp",
-                "explanation": "A measure taken beforehand; a stipulation.",
-                "examples": [
-                    {
-                        "en": "The contract contains a provision to deal with how payments are made if John loses his job.",
-                        "vi": "Hợp đồng có một điều khoản để giải quyết cách thức thanh toán được thực hiện nếu John mất việc."
-                    },
-                    {
-                        "en": "The father made provisions for his children through his will.",
-                        "vi": "Người cha đã chu cấp cho các con của mình thông qua di chúc."
-                    }
-                ]
-            }
-        ]
-    },
-    {
-        "category": "Contracts",
-        "word": "provide",
-        "phonetic": "/prəˈvaɪd/",
-        "meanings": [
-            {
-                "type": "(v)",
-                "meaning": "cung cấp",
-                "explanation": "To give someone something that they need.",
-                "examples": [
-                    {
-                        "en": "The contract requires us to provide a detailed report every month.",
-                        "vi": "Hợp đồng yêu cầu chúng tôi cung cấp một báo cáo chi tiết hàng tháng."
-                    },
-                    {
-                        "en": "We provide our employees with excellent health benefits.",
-                        "vi": "Chúng tôi cung cấp cho nhân viên của mình những phúc lợi sức khỏe tuyệt vời."
-                    }
-                ]
-            }
-        ]
-    },
-    {
-        "category": "Contracts",
-        "word": "provider",
-        "phonetic": "/prəˈvaɪdər/",
-        "meanings": [
-            {
-                "type": "(n)",
-                "meaning": "nhà cung cấp",
-                "explanation": "A company or person that provides a service or product.",
-                "examples": [
-                    {
-                        "en": "We are looking for a new Internet service provider.",
-                        "vi": "Chúng tôi đang tìm kiếm một nhà cung cấp dịch vụ Internet mới."
-                    },
-                    {
-                        "en": "The restaurant's main provider of fresh vegetables is a local farm.",
-                        "vi": "Nhà cung cấp rau tươi chính của nhà hàng là một trang trại địa phương."
-                    }
-                ]
-            }
-        ]
-    },
-    {
-        "category": "Contracts",
-        "word": "resolve",
-        "phonetic": "/rɪˈzɒlv/",
-        "meanings": [
-            {
-                "type": "(v)",
-                "meaning": "giải quyết, quyết tâm",
-                "explanation": "To deal with successfully; to declare.",
-                "examples": [
-                    {
-                        "en": "The mediator was able to resolve the problem to everyone's satisfaction.",
-                        "vi": "Người hòa giải đã có thể giải quyết vấn đề một cách thỏa đáng cho tất cả mọi người."
-                    },
-                    {
-                        "en": "The businessman resolved to clean out all the files by the end of the week.",
-                        "vi": "Doanh nhân đó đã quyết tâm dọn dẹp tất cả các tập tin vào cuối tuần."
-                    }
-                ]
-            },
-            {
-                "type": "(n)",
-                "meaning": "sự quyết tâm, sự kiên quyết",
-                "explanation": "A strong determination to do something.",
-                "examples": [
-                    {
-                        "en": "She showed great resolve in finishing the project on time.",
-                        "vi": "Cô ấy đã thể hiện sự quyết tâm cao độ khi hoàn thành dự án đúng hạn."
-                    },
-                    {
-                        "en": "His resolve to quit smoking was tested at the party.",
-                        "vi": "Sự kiên quyết bỏ thuốc lá của anh ấy đã bị thử thách tại bữa tiệc."
-                    }
-                ]
-            }
-        ]
-    },
-    {
-        "category": "Contracts",
-        "word": "specific",
-        "phonetic": "/spəˈsɪfɪk/",
-        "meanings": [
-            {
-                "type": "(adj)",
-                "meaning": "cụ thể, riêng biệt",
-                "explanation": "Particular; clearly defined or identified.",
-                "examples": [
-                    {
-                        "en": "The customer's specific complaint was not addressed in his e-mail.",
-                        "vi": "Khiếu nại cụ thể của khách hàng đã không được giải quyết trong email của anh ấy."
-                    },
-                    {
-                        "en": "In a contract, one specific word can change the meaning dramatically.",
-                        "vi": "Trong một hợp đồng, một từ cụ thể có thể thay đổi ý nghĩa một cách đáng kể."
-                    }
-                ]
-            }
-        ]
-    },
-    {
-        "category": "Contracts",
-        "word": "specification",
-        "phonetic": "/ˌspesɪfɪˈkeɪʃn/",
-        "meanings": [
-            {
-                "type": "(n)",
-                "meaning": "đặc điểm kỹ thuật",
-                "explanation": "A detailed description of how something should be done, made, etc.",
-                "examples": [
-                    {
-                        "en": "The product did not meet the client's specifications.",
-                        "vi": "Sản phẩm không đáp ứng được các thông số kỹ thuật của khách hàng."
-                    },
-                    {
-                        "en": "The blueprints include specifications for all the building materials.",
-                        "vi": "Các bản thiết kế bao gồm các chi tiết kỹ thuật cho tất cả các vật liệu xây dựng."
-                    }
-                ]
-            }
-        ]
-    },
-    {
-        "category": "Sheet1",
-        "word": "agreement",
-        "phonetic": "/əˈɡriːmənt/",
-        "meanings": [
-            {
-                "type": "(n)",
+                "type": "n",
                 "meaning": "hợp đồng, sự đồng ý",
                 "explanation": "A mutual arrangement, a contract.",
                 "examples": [
@@ -433,12 +44,12 @@
         ]
     },
     {
-        "category": "Sheet1",
+        "category": "Contracts",
         "word": "agree",
         "phonetic": "/əˈɡriː/",
         "meanings": [
             {
-                "type": "(v)",
+                "type": "v",
                 "meaning": "đồng ý, tán thành",
                 "explanation": "To have the same opinion.",
                 "examples": [
@@ -455,12 +66,12 @@
         ]
     },
     {
-        "category": "Sheet1",
+        "category": "Contracts",
         "word": "agreeable",
         "phonetic": "/əˈɡriːəbl/",
         "meanings": [
             {
-                "type": "(adj)",
+                "type": "adj",
                 "meaning": "sẵn sàng đồng ý",
                 "explanation": "Willing to agree to something.",
                 "examples": [
@@ -477,12 +88,12 @@
         ]
     },
     {
-        "category": "Sheet1",
+        "category": "Contracts",
         "word": "assurance",
         "phonetic": "/əˈʃʊrəns/",
         "meanings": [
             {
-                "type": "(n)",
+                "type": "n",
                 "meaning": "sự đảm bảo, sự chắc chắn",
                 "explanation": "A guarantee; confidence.",
                 "examples": [
@@ -499,12 +110,12 @@
         ]
     },
     {
-        "category": "Sheet1",
+        "category": "Contracts",
         "word": "assure",
         "phonetic": "/əˈʃʊr/",
         "meanings": [
             {
-                "type": "(v)",
+                "type": "v",
                 "meaning": "cam đoan, quả quyết",
                 "explanation": "To make certain; to guarantee.",
                 "examples": [
@@ -521,7 +132,7 @@
         ]
     },
     {
-        "category": "Sheet1",
+        "category": "Contracts",
         "word": "assuredly",
         "phonetic": "/əˈʃʊrədli/",
         "meanings": [
@@ -543,12 +154,12 @@
         ]
     },
     {
-        "category": "Sheet1",
+        "category": "Contracts",
         "word": "cancellation",
         "phonetic": "/ˌkænsəˈleɪʃn/",
         "meanings": [
             {
-                "type": "(n)",
+                "type": "n",
                 "meaning": "sự hủy bỏ",
                 "explanation": "Annulment; stopping.",
                 "examples": [
@@ -565,12 +176,12 @@
         ]
     },
     {
-        "category": "Sheet1",
+        "category": "Contracts",
         "word": "cancel",
         "phonetic": "/ˈkænsəl/",
         "meanings": [
             {
-                "type": "(v)",
+                "type": "v",
                 "meaning": "hủy bỏ",
                 "explanation": "To stop an arranged event from happening.",
                 "examples": [
@@ -587,12 +198,12 @@
         ]
     },
     {
-        "category": "Sheet1",
+        "category": "Contracts",
         "word": "canceled",
         "phonetic": "/ˈkænsəld/",
         "meanings": [
             {
-                "type": "(adj)",
+                "type": "adj",
                 "meaning": "đã bị hủy",
                 "explanation": "Annulled; stopped.",
                 "examples": [
@@ -609,12 +220,12 @@
         ]
     },
     {
-        "category": "Sheet1",
+        "category": "Contracts",
         "word": "determine",
         "phonetic": "/dɪˈtɜːrmɪn/",
         "meanings": [
             {
-                "type": "(v)",
+                "type": "v",
                 "meaning": "xác định, quyết định",
                 "explanation": "To find out; to influence.",
                 "examples": [
@@ -631,12 +242,12 @@
         ]
     },
     {
-        "category": "Sheet1",
+        "category": "Contracts",
         "word": "engage",
         "phonetic": "/ɪnˈɡeɪdʒ/",
         "meanings": [
             {
-                "type": "(v)",
+                "type": "v",
                 "meaning": "tham gia; thuê, mướn",
                 "explanation": "To participate; to involve.",
                 "examples": [
@@ -653,12 +264,12 @@
         ]
     },
     {
-        "category": "Sheet1",
+        "category": "Contracts",
         "word": "establish",
         "phonetic": "/ɪˈstæblɪʃ/",
         "meanings": [
             {
-                "type": "(v)",
+                "type": "v",
                 "meaning": "thành lập, thiết lập",
                 "explanation": "To institute permanently; to bring about.",
                 "examples": [
@@ -675,12 +286,12 @@
         ]
     },
     {
-        "category": "Sheet1",
+        "category": "Contracts",
         "word": "obligate",
         "phonetic": "/ˈɒblɪɡeɪt/",
         "meanings": [
             {
-                "type": "(v)",
+                "type": "v",
                 "meaning": "bắt buộc, ép buộc",
                 "explanation": "To bind legally or morally.",
                 "examples": [
@@ -697,12 +308,12 @@
         ]
     },
     {
-        "category": "Sheet1",
+        "category": "Contracts",
         "word": "obligation",
         "phonetic": "/ˌɒblɪˈɡeɪʃn/",
         "meanings": [
             {
-                "type": "(n)",
+                "type": "n",
                 "meaning": "nghĩa vụ, bổn phận",
                 "explanation": "A legal or moral responsibility.",
                 "examples": [
@@ -719,12 +330,12 @@
         ]
     },
     {
-        "category": "Sheet1",
+        "category": "Contracts",
         "word": "obligatory",
         "phonetic": "/əˈblɪɡətəri/",
         "meanings": [
             {
-                "type": "(adj)",
+                "type": "adj",
                 "meaning": "có tính bắt buộc",
                 "explanation": "Required; compulsory.",
                 "examples": [
@@ -741,12 +352,12 @@
         ]
     },
     {
-        "category": "Sheet1",
+        "category": "Contracts",
         "word": "party",
         "phonetic": "/ˈpɑːrti/",
         "meanings": [
             {
-                "type": "(n)",
+                "type": "n",
                 "meaning": "bên (trong hợp đồng)",
                 "explanation": "A person or group participating in an action or plan.",
                 "examples": [
@@ -763,12 +374,12 @@
         ]
     },
     {
-        "category": "Sheet1",
+        "category": "Contracts",
         "word": "provision",
         "phonetic": "/prəˈvɪʒn/",
         "meanings": [
             {
-                "type": "(n)",
+                "type": "n",
                 "meaning": "điều khoản, sự cung cấp",
                 "explanation": "A measure taken beforehand; a stipulation.",
                 "examples": [
@@ -785,12 +396,12 @@
         ]
     },
     {
-        "category": "Sheet1",
+        "category": "Contracts",
         "word": "provide",
         "phonetic": "/prəˈvaɪd/",
         "meanings": [
             {
-                "type": "(v)",
+                "type": "v",
                 "meaning": "cung cấp",
                 "explanation": "To supply; to make available.",
                 "examples": [
@@ -807,12 +418,12 @@
         ]
     },
     {
-        "category": "Sheet1",
+        "category": "Contracts",
         "word": "provider",
         "phonetic": "/prəˈvaɪdər/",
         "meanings": [
             {
-                "type": "(n)",
+                "type": "n",
                 "meaning": "nhà cung cấp",
                 "explanation": "A person or company that makes a service or product available.",
                 "examples": [
@@ -825,12 +436,12 @@
         ]
     },
     {
-        "category": "Sheet1",
+        "category": "Contracts",
         "word": "resolve",
         "phonetic": "/rɪˈzɒlv/",
         "meanings": [
             {
-                "type": "(v)",
+                "type": "v",
                 "meaning": "giải quyết, quyết định",
                 "explanation": "To deal with successfully; to declare.",
                 "examples": [
@@ -845,7 +456,7 @@
                 ]
             },
             {
-                "type": "(n)",
+                "type": "n",
                 "meaning": "sự quyết tâm, sự kiên quyết",
                 "explanation": "Conviction; a strong determination to do something.",
                 "examples": [
@@ -862,12 +473,12 @@
         ]
     },
     {
-        "category": "Sheet1",
+        "category": "Contracts",
         "word": "specific",
         "phonetic": "/spəˈsɪfɪk/",
         "meanings": [
             {
-                "type": "(adj)",
+                "type": "adj",
                 "meaning": "cụ thể, riêng biệt",
                 "explanation": "Particular.",
                 "examples": [
@@ -884,12 +495,12 @@
         ]
     },
     {
-        "category": "Sheet1",
+        "category": "Contracts",
         "word": "specify",
         "phonetic": "/ˈspesɪfaɪ/",
         "meanings": [
             {
-                "type": "(v)",
+                "type": "v",
                 "meaning": "chỉ rõ, ghi rõ",
                 "explanation": "To state in detail.",
                 "examples": [
@@ -906,12 +517,12 @@
         ]
     },
     {
-        "category": "Sheet1",
+        "category": "Contracts",
         "word": "specification",
         "phonetic": "/ˌspesɪfɪˈkeɪʃn/",
         "meanings": [
             {
-                "type": "(n)",
+                "type": "n",
                 "meaning": "đặc điểm kỹ thuật",
                 "explanation": "A detailed description.",
                 "examples": [
@@ -922,593 +533,6 @@
                     {
                         "en": "The blueprints include the specifications for the new office.",
                         "vi": "Các bản thiết kế bao gồm các chi tiết kỹ thuật cho văn phòng mới."
-                    }
-                ]
-            }
-        ]
-    },
-    {
-        "category": "Sheet2",
-        "word": "attraction",
-        "phonetic": "/əˈtrækʃn/",
-        "meanings": [
-            {
-                "type": "(n)",
-                "meaning": "sự thu hút, điểm hấp dẫn",
-                "explanation": "Something that draws attention.",
-                "examples": [
-                    {
-                        "en": "The main attraction of the new model is its sleek design.",
-                        "vi": "Điểm thu hút chính của mẫu xe mới là thiết kế bóng bẩy của nó."
-                    },
-                    {
-                        "en": "Having a famous spokesperson is a big attraction for a product.",
-                        "vi": "Có một người phát ngôn nổi tiếng là một sức hút lớn cho sản phẩm."
-                    }
-                ]
-            }
-        ]
-    },
-    {
-        "category": "Sheet2",
-        "word": "attractive",
-        "phonetic": "/əˈtræktɪv/",
-        "meanings": [
-            {
-                "type": "(adj)",
-                "meaning": "hấp dẫn, lôi cuốn",
-                "explanation": "Appealing to the senses.",
-                "examples": [
-                    {
-                        "en": "Lou ran a very attractive business.",
-                        "vi": "Lou điều hành một công việc kinh doanh rất hấp dẫn."
-                    },
-                    {
-                        "en": "The store used an attractive window display to draw in customers.",
-                        "vi": "Cửa hàng đã sử dụng một màn trưng bày cửa sổ hấp dẫn để lôi kéo khách hàng."
-                    }
-                ]
-            }
-        ]
-    },
-    {
-        "category": "Sheet2",
-        "word": "compare",
-        "phonetic": "/kəmˈper/",
-        "meanings": [
-            {
-                "type": "(v)",
-                "meaning": "so sánh",
-                "explanation": "To examine similarities and differences.",
-                "examples": [
-                    {
-                        "en": "Once the customer compared the two products, her choice was easy.",
-                        "vi": "Một khi khách hàng so sánh hai sản phẩm, lựa chọn của cô ấy trở nên dễ dàng."
-                    },
-                    {
-                        "en": "The price for this brand is high compared to the other brands on the market.",
-                        "vi": "Giá của thương hiệu này cao so với các thương hiệu khác trên thị trường."
-                    }
-                ]
-            }
-        ]
-    },
-    {
-        "category": "Sheet2",
-        "word": "comparison",
-        "phonetic": "/kəmˈpærɪsn/",
-        "meanings": [
-            {
-                "type": "(n)",
-                "meaning": "sự so sánh",
-                "explanation": "The act of looking for differences and similarities.",
-                "examples": [
-                    {
-                        "en": "The comparison shows that the second product is better.",
-                        "vi": "Sự so sánh cho thấy rằng sản phẩm thứ hai tốt hơn."
-                    },
-                    {
-                        "en": "There is no comparison between the two singers.",
-                        "vi": "Không có sự so sánh nào giữa hai ca sĩ này."
-                    }
-                ]
-            }
-        ]
-    },
-    {
-        "category": "Sheet2",
-        "word": "competition",
-        "phonetic": "/ˌkɑːmpəˈtɪʃn/",
-        "meanings": [
-            {
-                "type": "(n)",
-                "meaning": "sự cạnh tranh",
-                "explanation": "A contest or struggle.",
-                "examples": [
-                    {
-                        "en": "In the competition for afternoon diners, Hector's has come out on top.",
-                        "vi": "Trong cuộc cạnh tranh giành thực khách buổi chiều, quán của Hector đã chiến thắng."
-                    },
-                    {
-                        "en": "The company has decided not to join the growing competition for dominance in the semiconductor market.",
-                        "vi": "Công ty đã quyết định không tham gia vào cuộc cạnh tranh ngày càng tăng để giành ưu thế trên thị trường bán dẫn."
-                    }
-                ]
-            }
-        ]
-    },
-    {
-        "category": "Sheet2",
-        "word": "compete",
-        "phonetic": "/kəmˈpiːt/",
-        "meanings": [
-            {
-                "type": "(v)",
-                "meaning": "cạnh tranh",
-                "explanation": "To strive against another.",
-                "examples": [
-                    {
-                        "en": "We competed against three other agencies to get this contract.",
-                        "vi": "Chúng tôi đã cạnh tranh với ba công ty khác để có được hợp đồng này."
-                    },
-                    {
-                        "en": "It is difficult for a small store to compete with the big supermarkets.",
-                        "vi": "Rất khó để một cửa hàng nhỏ có thể cạnh tranh với các siêu thị lớn."
-                    }
-                ]
-            }
-        ]
-    },
-    {
-        "category": "Sheet2",
-        "word": "competitive",
-        "phonetic": "/kəmˈpetətɪv/",
-        "meanings": [
-            {
-                "type": "(adj)",
-                "meaning": "có tính cạnh tranh",
-                "explanation": "Relating to a situation in which people or firms struggle against each other.",
-                "examples": [
-                    {
-                        "en": "It's a very competitive market, so we have to keep our prices low.",
-                        "vi": "Đó là một thị trường rất cạnh tranh, vì vậy chúng tôi phải giữ giá ở mức thấp."
-                    },
-                    {
-                        "en": "His competitive spirit made him a good salesperson.",
-                        "vi": "Tinh thần cạnh tranh của anh ấy đã khiến anh ấy trở thành một nhân viên bán hàng giỏi."
-                    }
-                ]
-            }
-        ]
-    },
-    {
-        "category": "Sheet2",
-        "word": "consume",
-        "phonetic": "/kənˈsuːm/",
-        "meanings": [
-            {
-                "type": "(v)",
-                "meaning": "tiêu thụ",
-                "explanation": "To absorb; to use up.",
-                "examples": [
-                    {
-                        "en": "This printer consumes more toner than the downstairs printer.",
-                        "vi": "Máy in này tiêu thụ nhiều mực hơn máy in ở tầng dưới."
-                    },
-                    {
-                        "en": "The business plans consumed all of Fritz's attention this fall.",
-                        "vi": "Các kế hoạch kinh doanh đã chiếm hết sự chú ý của Fritz vào mùa thu này."
-                    }
-                ]
-            }
-        ]
-    },
-    {
-        "category": "Sheet2",
-        "word": "consumer",
-        "phonetic": "/kənˈsuːmər/",
-        "meanings": [
-            {
-                "type": "(n)",
-                "meaning": "người tiêu dùng",
-                "explanation": "A person who buys goods and services.",
-                "examples": [
-                    {
-                        "en": "The new telephone rates will affect all consumers.",
-                        "vi": "Mức cước điện thoại mới sẽ ảnh hưởng đến tất cả người tiêu dùng."
-                    },
-                    {
-                        "en": "Consumers are demanding healthier food choices.",
-                        "vi": "Người tiêu dùng đang yêu cầu các lựa chọn thực phẩm lành mạnh hơn."
-                    }
-                ]
-            }
-        ]
-    },
-    {
-        "category": "Sheet2",
-        "word": "convince",
-        "phonetic": "/kənˈvɪns/",
-        "meanings": [
-            {
-                "type": "(v)",
-                "meaning": "thuyết phục",
-                "explanation": "To bring to believe by argument; to persuade.",
-                "examples": [
-                    {
-                        "en": "The salesman convinced his customer to buy his entire inventory of pens.",
-                        "vi": "Nhân viên bán hàng đã thuyết phục khách hàng của mình mua toàn bộ số bút tồn kho của anh ấy."
-                    },
-                    {
-                        "en": "He convinced the manager of the benefits of the new system.",
-                        "vi": "Anh ấy đã thuyết phục người quản lý về lợi ích của hệ thống mới."
-                    }
-                ]
-            }
-        ]
-    },
-    {
-        "category": "Sheet2",
-        "word": "convincing",
-        "phonetic": "/kənˈvɪnsɪŋ/",
-        "meanings": [
-            {
-                "type": "(adj)",
-                "meaning": "có sức thuyết phục",
-                "explanation": "Able to make someone believe that something is true or real.",
-                "examples": [
-                    {
-                        "en": "He made a convincing argument for a larger marketing budget.",
-                        "vi": "Anh ấy đã đưa ra một lập luận thuyết phục để có được ngân sách tiếp thị lớn hơn."
-                    },
-                    {
-                        "en": "The advertisement was very convincing, so I bought the product.",
-                        "vi": "Đoạn quảng cáo rất có sức thuyết phục, vì vậy tôi đã mua sản phẩm."
-                    }
-                ]
-            }
-        ]
-    },
-    {
-        "category": "Sheet2",
-        "word": "currently",
-        "phonetic": "/ˈkɜːrəntli/",
-        "meanings": [
-            {
-                "type": "(adv)",
-                "meaning": "hiện tại",
-                "explanation": "Happening at the present time; now.",
-                "examples": [
-                    {
-                        "en": "We are currently exploring plans to update the MX3 model.",
-                        "vi": "Chúng tôi hiện đang xem xét các kế hoạch để cập nhật mẫu MX3."
-                    },
-                    {
-                        "en": "Currently, customers are demanding big discounts for bulk orders.",
-                        "vi": "Hiện tại, khách hàng đang yêu cầu chiết khấu cao cho các đơn hàng số lượng lớn."
-                    }
-                ]
-            }
-        ]
-    },
-    {
-        "category": "Sheet2",
-        "word": "fad",
-        "phonetic": "/fæd/",
-        "meanings": [
-            {
-                "type": "(n)",
-                "meaning": "mốt nhất thời",
-                "explanation": "A practice followed enthusiastically for a short time; a craze.",
-                "examples": [
-                    {
-                        "en": "The mini dress was a fad once thought to be finished, but now it is making a comeback.",
-                        "vi": "Váy mini là một mốt nhất thời từng được cho là đã kết thúc, nhưng giờ đây nó đang quay trở lại."
-                    },
-                    {
-                        "en": "Classic tastes may seem boring but they have proven to resist fads.",
-                        "vi": "Các thị hiếu cổ điển có vẻ nhàm chán nhưng chúng đã chứng tỏ khả năng chống lại các mốt nhất thời."
-                    }
-                ]
-            }
-        ]
-    },
-    {
-        "category": "Sheet2",
-        "word": "inspiration",
-        "phonetic": "/ˌɪnspəˈreɪʃn/",
-        "meanings": [
-            {
-                "type": "(n)",
-                "meaning": "nguồn cảm hứng",
-                "explanation": "A thing or person that arouses a feeling or thought.",
-                "examples": [
-                    {
-                        "en": "His work is an inspiration to the marketing department.",
-                        "vi": "Công việc của anh ấy là nguồn cảm hứng cho phòng marketing."
-                    },
-                    {
-                        "en": "Marta's high sales in Spain were an inspiration to other European reps.",
-                        "vi": "Doanh số bán hàng cao của Marta ở Tây Ban Nha là nguồn cảm hứng cho các đại diện khác ở châu Âu."
-                    }
-                ]
-            }
-        ]
-    },
-    {
-        "category": "Sheet2",
-        "word": "inspire",
-        "phonetic": "/ɪnˈspaɪər/",
-        "meanings": [
-            {
-                "type": "(v)",
-                "meaning": "truyền cảm hứng",
-                "explanation": "To give a person a feeling or idea.",
-                "examples": [
-                    {
-                        "en": "A good leader can inspire their team to achieve great things.",
-                        "vi": "Một nhà lãnh đạo giỏi có thể truyền cảm hứng cho đội ngũ của họ để đạt được những điều tuyệt vời."
-                    },
-                    {
-                        "en": "The movie was so good, it inspired him to study film.",
-                        "vi": "Bộ phim hay đến nỗi đã truyền cảm hứng cho anh ấy học về điện ảnh."
-                    }
-                ]
-            }
-        ]
-    },
-    {
-        "category": "Sheet2",
-        "word": "market",
-        "phonetic": "/ˈmɑːrkɪt/",
-        "meanings": [
-            {
-                "type": "(v)",
-                "meaning": "tiếp thị, quảng bá",
-                "explanation": "The course of buying and selling a product.",
-                "examples": [
-                    {
-                        "en": "When Omar first began making his chutneys, he marketed them door-to-door.",
-                        "vi": "Khi Omar lần đầu tiên bắt đầu làm món tương chutney, anh ấy đã tiếp thị chúng bằng cách đến từng nhà."
-                    },
-                    {
-                        "en": "The company decided to market its new product to a younger audience.",
-                        "vi": "Công ty đã quyết định tiếp thị sản phẩm mới của mình tới đối tượng khách hàng trẻ hơn."
-                    }
-                ]
-            },
-            {
-                "type": "(n)",
-                "meaning": "thị trường",
-                "explanation": "The demand for a product.",
-                "examples": [
-                    {
-                        "en": "The market for brightly colored clothing was brisk last year, but it's moving sluggishly this year.",
-                        "vi": "Thị trường quần áo màu sắc sặc sỡ đã sôi động vào năm ngoái, nhưng năm nay lại đang di chuyển một cách chậm chạp."
-                    },
-                    {
-                        "en": "We need to analyze the current market trends.",
-                        "vi": "Chúng ta cần phân tích các xu hướng thị trường hiện tại."
-                    }
-                ]
-            }
-        ]
-    },
-    {
-        "category": "Sheet2",
-        "word": "marketing",
-        "phonetic": "/ˈmɑːrkɪtɪŋ/",
-        "meanings": [
-            {
-                "type": "(n)",
-                "meaning": "sự tiếp thị",
-                "explanation": "The process of promoting and selling products.",
-                "examples": [
-                    {
-                        "en": "A good marketing campaign will increase sales.",
-                        "vi": "Một chiến dịch tiếp thị tốt sẽ làm tăng doanh số bán hàng."
-                    },
-                    {
-                        "en": "Our marketing team is developing a new strategy for social media.",
-                        "vi": "Đội ngũ tiếp thị của chúng tôi đang phát triển một chiến lược mới cho mạng xã hội."
-                    }
-                ]
-            }
-        ]
-    },
-    {
-        "category": "Sheet2",
-        "word": "persuasion",
-        "phonetic": "/pərˈsweɪʒn/",
-        "meanings": [
-            {
-                "type": "(n)",
-                "meaning": "sự thuyết phục",
-                "explanation": "The power to influence; a deep conviction or belief.",
-                "examples": [
-                    {
-                        "en": "The seminar teaches techniques of persuasion to increase sales.",
-                        "vi": "Buổi hội thảo dạy các kỹ thuật thuyết phục để tăng doanh số."
-                    },
-                    {
-                        "en": "It took a lot of persuasion to get her to agree to the deal.",
-                        "vi": "Phải mất rất nhiều công sức thuyết phục để cô ấy đồng ý với thỏa thuận."
-                    }
-                ]
-            }
-        ]
-    },
-    {
-        "category": "Sheet2",
-        "word": "persuade",
-        "phonetic": "/pərˈsweɪd/",
-        "meanings": [
-            {
-                "type": "(v)",
-                "meaning": "thuyết phục",
-                "explanation": "To move by argument or logic.",
-                "examples": [
-                    {
-                        "en": "No amount of marketing can persuade consumers to buy a bad product twice.",
-                        "vi": "Không có hình thức tiếp thị nào có thể thuyết phục người tiêu dùng mua một sản phẩm tồi đến lần thứ hai."
-                    },
-                    {
-                        "en": "John persuaded me to buy a new television.",
-                        "vi": "John đã thuyết phục tôi mua một chiếc tivi mới."
-                    }
-                ]
-            }
-        ]
-    },
-    {
-        "category": "Sheet2",
-        "word": "persuasive",
-        "phonetic": "/pərˈsweɪsɪv/",
-        "meanings": [
-            {
-                "type": "(adj)",
-                "meaning": "có tính thuyết phục",
-                "explanation": "Good at influencing someone.",
-                "examples": [
-                    {
-                        "en": "She delivered a persuasive speech that won over the board of directors.",
-                        "vi": "Cô ấy đã có một bài phát biểu đầy thuyết phục và đã giành được sự ủng hộ của ban giám đốc."
-                    },
-                    {
-                        "en": "The salesperson was very persuasive and I ended up buying the car.",
-                        "vi": "Nhân viên bán hàng rất có tài thuyết phục và cuối cùng tôi đã mua chiếc xe."
-                    }
-                ]
-            }
-        ]
-    },
-    {
-        "category": "Sheet2",
-        "word": "productive",
-        "phonetic": "/prəˈdʌktɪv/",
-        "meanings": [
-            {
-                "type": "(adj)",
-                "meaning": "năng suất",
-                "explanation": "Constructive; high yield.",
-                "examples": [
-                    {
-                        "en": "The new software has made our team much more productive.",
-                        "vi": "Phần mềm mới đã giúp đội của chúng tôi làm việc năng suất hơn nhiều."
-                    },
-                    {
-                        "en": "The unproductive sales meeting brought many staff complaints.",
-                        "vi": "Cuộc họp bán hàng không hiệu quả đã gây ra nhiều phàn nàn từ nhân viên."
-                    }
-                ]
-            }
-        ]
-    },
-    {
-        "category": "Sheet2",
-        "word": "produce",
-        "phonetic": "/prəˈduːs/",
-        "meanings": [
-            {
-                "type": "(v)",
-                "meaning": "sản xuất",
-                "explanation": "To create; to make.",
-                "examples": [
-                    {
-                        "en": "We need to produce a report on last quarter's sales figures.",
-                        "vi": "Chúng ta cần làm một báo cáo về số liệu bán hàng của quý trước."
-                    },
-                    {
-                        "en": "The company produces the finest pain relievers.",
-                        "vi": "Công ty sản xuất những loại thuốc giảm đau tốt nhất."
-                    }
-                ]
-            }
-        ]
-    },
-    {
-        "category": "Sheet2",
-        "word": "product",
-        "phonetic": "/ˈprɑːdʌkt/",
-        "meanings": [
-            {
-                "type": "(n)",
-                "meaning": "sản phẩm",
-                "explanation": "Something that is made or grown.",
-                "examples": [
-                    {
-                        "en": "The marketing team is responsible for promoting the company's products.",
-                        "vi": "Đội ngũ tiếp thị chịu trách nhiệm quảng bá các sản phẩm của công ty."
-                    },
-                    {
-                        "en": "The new product is selling very well.",
-                        "vi": "Sản phẩm mới đang bán rất chạy."
-                    }
-                ]
-            }
-        ]
-    },
-    {
-        "category": "Sheet2",
-        "word": "satisfaction",
-        "phonetic": "/ˌsætɪsˈfækʃn/",
-        "meanings": [
-            {
-                "type": "(n)",
-                "meaning": "sự hài lòng",
-                "explanation": "Happiness.",
-                "examples": [
-                    {
-                        "en": "Your satisfaction is guaranteed or you'll get your money back.",
-                        "vi": "Sự hài lòng của bạn được đảm bảo hoặc bạn sẽ được hoàn lại tiền."
-                    },
-                    {
-                        "en": "We survey all of our customers to measure their satisfaction with our services.",
-                        "vi": "Chúng tôi khảo sát tất cả khách hàng để đo lường sự hài lòng của họ với dịch vụ của chúng tôi."
-                    }
-                ]
-            }
-        ]
-    },
-    {
-        "category": "Sheet2",
-        "word": "satisfy",
-        "phonetic": "/ˈsætɪsfaɪ/",
-        "meanings": [
-            {
-                "type": "(v)",
-                "meaning": "làm hài lòng",
-                "explanation": "To meet the needs or expectations of a person.",
-                "examples": [
-                    {
-                        "en": "The terms of the contract did not satisfy the union.",
-                        "vi": "Các điều khoản của hợp đồng không làm hài lòng công đoàn."
-                    },
-                    {
-                        "en": "We hope this new product will satisfy our customers.",
-                        "vi": "Chúng tôi hy vọng sản phẩm mới này sẽ làm hài lòng khách hàng của mình."
-                    }
-                ]
-            }
-        ]
-    },
-    {
-        "category": "Sheet2",
-        "word": "satisfactory",
-        "phonetic": "/ˌsætɪsˈfæktəri/",
-        "meanings": [
-            {
-                "type": "(adj)",
-                "meaning": "thỏa đáng",
-                "explanation": "Acceptable; good enough.",
-                "examples": [
-                    {
-                        "en": "The results of the marketing campaign were satisfactory.",
-                        "vi": "Kết quả của chiến dịch tiếp thị khá thỏa đáng."
-                    },
-                    {
-                        "en": "He did a satisfactory job on the report, but it wasn't excellent.",
-                        "vi": "Anh ấy đã hoàn thành báo cáo một cách đạt yêu cầu, nhưng nó không xuất sắc."
                     }
                 ]
             }
