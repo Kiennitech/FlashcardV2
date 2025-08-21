@@ -109,7 +109,6 @@
         
         <footer class="w-full pt-4 pb-4">
             <div class="w-full max-w-xl mx-auto flex flex-col gap-3">
-                <!-- Row for review buttons -->
                 <div class="flex items-center gap-3">
                     <button id="topic-review-btn" class="hidden animated-button flex-1 px-4 py-2 bg-cyan-500 hover:bg-cyan-600 text-white font-semibold rounded-lg flex flex-col items-center justify-center disabled:bg-slate-300 disabled:transform-none disabled:shadow-none text-sm" title="Ôn tập các từ đã học trong chủ đề này">
                         <div class="flex items-center gap-2">
@@ -126,7 +125,6 @@
                         <span class="text-xs font-normal opacity-80">(<span class="font-bold">0</span>)</span>
                     </button>
                 </div>
-                <!-- Row for category select -->
                 <div class="relative w-full">
                     <select id="category-select" class="w-full p-2.5 text-sm font-medium text-slate-700 bg-white border border-slate-300 rounded-lg shadow-sm appearance-none focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer" title="Chọn chủ đề để học">
                     </select>
@@ -138,10 +136,46 @@
         </footer>
     </div>
     
-    <!-- Các modal không thay đổi -->
-    <div id="error-modal" class="modal hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">...</div>
-    <div id="progress-matrix-modal" class="modal hidden fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center p-4 z-50">...</div>
-    <div id="confirm-modal" class="modal hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">...</div>
+    <div id="error-modal" class="modal hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+        <div class="bg-white rounded-lg shadow-xl p-6 max-w-sm w-full">
+            <h3 id="error-title" class="text-lg font-bold text-red-600 mb-2">Đã xảy ra lỗi</h3>
+            <p id="error-message" class="text-slate-600 mb-4">Không thể thực hiện yêu cầu. Vui lòng thử lại.</p>
+            <button id="close-error-modal-btn" class="w-full bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition-colors">Đóng</button>
+        </div>
+    </div>
+
+    <div id="progress-matrix-modal" class="modal hidden fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center p-4 z-50">
+        <div class="bg-white rounded-2xl shadow-xl p-6 max-w-4xl w-full max-h-[80vh] flex flex-col">
+            <div class="flex justify-between items-center mb-4">
+                <h3 id="progress-modal-title" class="text-xl font-bold text-slate-800">Thống kê tổng quát</h3>
+                <button id="close-progress-matrix-btn" class="text-slate-500 hover:text-slate-800 text-3xl leading-none">&times;</button>
+            </div>
+            <div id="progress-stats" class="grid grid-cols-2 md:grid-cols-5 items-center justify-center gap-4 text-xs mb-4">
+                <div class="flex items-center gap-1.5"><div class="w-3 h-3 rounded-sm bg-slate-300"></div><span>Chưa học (<span id="stats-unstudied-count">0</span> - <span id="stats-unstudied-percent">0%</span>)</span></div>
+                <div class="flex items-center gap-1.5"><div class="w-3 h-3 rounded-sm bg-red-500"></div><span>Khó (<span id="stats-hard-count">0</span> - <span id="stats-hard-percent">0%</span>)</span></div>
+                <div class="flex items-center gap-1.5"><div class="w-3 h-3 rounded-sm bg-blue-500"></div><span>Trung bình (<span id="stats-good-count">0</span> - <span id="stats-good-percent">0%</span>)</span></div>
+                <div class="flex items-center gap-1.5"><div class="w-3 h-3 rounded-sm bg-green-500"></div><span>Dễ (<span id="stats-easy-count">0</span> - <span id="stats-easy-percent">0%</span>)</span></div>
+                <div class="flex items-center gap-1.5"><div class="w-3 h-3 rounded-sm bg-purple-500"></div><span>Đã biết (<span id="stats-known-count">0</span> - <span id="stats-known-percent">0%</span>)</span></div>
+            </div>
+            <div id="progress-grid-container" class="progress-grid overflow-y-auto p-2 bg-slate-100 rounded-lg">
+            </div>
+            <div class="mt-4 pt-4 border-t border-slate-200">
+                <button id="reset-progress-btn" class="w-full bg-red-100 text-red-700 px-4 py-2 rounded-lg hover:bg-red-200 transition-colors">Xóa toàn bộ tiến trình học tập</button>
+            </div>
+        </div>
+    </div>
+    
+    <div id="confirm-modal" class="modal hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+        <div class="bg-white rounded-lg shadow-xl p-6 max-w-sm w-full">
+            <h3 id="confirm-title" class="text-lg font-bold text-slate-800 mb-2">Xác nhận</h3>
+            <p id="confirm-message" class="text-slate-600 mb-4">Bạn có chắc chắn muốn thực hiện hành động này không?</p>
+            <div class="flex justify-end gap-3">
+                <button id="cancel-btn" class="px-4 py-2 bg-slate-200 text-slate-800 rounded-lg hover:bg-slate-300">Hủy</button>
+                <button id="confirm-btn" class="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600">Xác nhận</button>
+            </div>
+        </div>
+    </div>
+
     <div id="toast-notification"></div>
 
     <script>
@@ -152,10 +186,9 @@
         const MODES = { LEARN: 'learn', TOPIC_REVIEW: 'topic_review', GLOBAL_REVIEW: 'global_review' };
         let currentMode = MODES.LEARN;
 
-        // THAY ĐỔI 1: Cấu trúc dữ liệu mới
-        let vocabularyList = []; // Danh sách phẳng các từ
-        let vocabularyMap = new Map(); // Map để tra cứu từ nhanh
-        let categories = {}; // Đối tượng chứa các từ theo chủ đề
+        let vocabularyList = [];
+        let vocabularyMap = new Map();
+        let categories = {};
 
         let srsProgressData = {};
         const SRS_INTERVALS = { 1: 1, 2: 3, 3: 7, 4: 14, 5: 30, 6: 90 };
@@ -172,44 +205,198 @@
         let lastProgressViewCategory = null; 
         let userHasInteracted = false;
 
-        // --- UI ELEMENT REFERENCES (Không thay đổi) ---
-        const ui = { /* ... */ };
+        // SỬA LỖI: Khai báo đầy đủ các biến UI
+        const ui = {
+            flashcard: document.getElementById('flashcard'),
+            flashcardFront: document.querySelector('.flashcard-face.flashcard-front'),
+            cardBackContent: document.getElementById('card-back-content'),
+            srsControls: document.getElementById('srs-controls'),
+            srsRatingGroup: document.getElementById('srs-rating-group'),
+            cardCounter: document.getElementById('card-counter'),
+            cardPrevBtn: document.getElementById('card-prev-btn'),
+            cardNextBtn: document.getElementById('card-next-btn'),
+            categorySelect: document.getElementById('category-select'),
+            srsReviewBtn: document.getElementById('srs-review-btn'),
+            topicReviewBtn: document.getElementById('topic-review-btn'),
+            errorModal: document.getElementById('error-modal'),
+            errorTitle: document.getElementById('error-title'),
+            errorMessage: document.getElementById('error-message'),
+            closeErrorModalBtn: document.getElementById('close-error-modal-btn'),
+            progressMatrixModal: document.getElementById('progress-matrix-modal'),
+            progressModalTitle: document.getElementById('progress-modal-title'),
+            progressMatrixBtn: document.getElementById('progress-matrix-btn'),
+            topicProgressBtn: document.getElementById('topic-progress-btn'),
+            closeProgressMatrixBtn: document.getElementById('close-progress-matrix-btn'),
+            progressGridContainer: document.getElementById('progress-grid-container'),
+            shuffleBtn: document.getElementById('shuffle-btn'),
+            backToLearnBtn: document.getElementById('back-to-learn-btn'),
+            knownBtn: document.getElementById('known-btn'),
+            toast: document.getElementById('toast-notification'),
+            resetProgressBtn: document.getElementById('reset-progress-btn'),
+            confirmModal: document.getElementById('confirm-modal'),
+            confirmTitle: document.getElementById('confirm-title'),
+            confirmMessage: document.getElementById('confirm-message'),
+            confirmBtn: document.getElementById('confirm-btn'),
+            cancelBtn: document.getElementById('cancel-btn'),
+            statsUnstudiedCount: document.getElementById('stats-unstudied-count'),
+            statsUnstudiedPercent: document.getElementById('stats-unstudied-percent'),
+            statsHardCount: document.getElementById('stats-hard-count'),
+            statsHardPercent: document.getElementById('stats-hard-percent'),
+            statsGoodCount: document.getElementById('stats-good-count'),
+            statsGoodPercent: document.getElementById('stats-good-percent'),
+            statsEasyCount: document.getElementById('stats-easy-count'),
+            statsEasyPercent: document.getElementById('stats-easy-percent'),
+            statsKnownCount: document.getElementById('stats-known-count'),
+            statsKnownPercent: document.getElementById('stats-known-percent'),
+        };
         
-        const speakerIconSVG = `<svg ... </svg>`;
+        const speakerIconSVG = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-volume-2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/></svg>`;
         const loadingIconSVG = `<div class="loader"></div>`;
 
         // --- CORE FUNCTIONS ---
-        
-        // THAY ĐỔI 2: Hàm tìm từ mới, tra cứu trên Map
         function findWordData(wordKey) {
             return vocabularyMap.get(wordKey);
         }
 
-        // --- SRS LOGIC (Không thay đổi) ---
-        function updateSrsProgress(wordKey, rating) { /* ... */ }
-        function markAsKnown(wordKey) { /* ... */ }
-        function getGlobalReviewQueue() { /* ... */ }
+        // --- SRS (Spaced Repetition System) LOGIC ---
+        function updateSrsProgress(wordKey, rating) {
+            let progress = srsProgressData[wordKey] || { level: 1 };
+            let currentLevel = progress.level;
 
-        // THAY ĐỔI 3: Hàm lấy danh sách ôn tập theo chủ đề mới
+            if (rating === 'hard') {
+                currentLevel = 1;
+            } else if (rating === 'good') {
+                 currentLevel = Math.min(MAX_SRS_LEVEL, currentLevel + 1);
+            } else if (rating === 'easy') {
+                currentLevel = Math.min(MAX_SRS_LEVEL, currentLevel + 2);
+            }
+
+            const intervalDays = SRS_INTERVALS[currentLevel] || 1;
+            const nextReviewDate = new Date();
+            nextReviewDate.setDate(nextReviewDate.getDate() + intervalDays);
+            
+            srsProgressData[wordKey] = {
+                level: currentLevel,
+                nextReviewDate: nextReviewDate.toISOString()
+            };
+            saveSrsProgress();
+        }
+
+        function markAsKnown(wordKey) {
+            const farFutureDate = new Date();
+            farFutureDate.setFullYear(farFutureDate.getFullYear() + 10);
+            srsProgressData[wordKey] = {
+                level: 99,
+                nextReviewDate: farFutureDate.toISOString()
+            };
+            saveSrsProgress();
+            showToast(`'${wordKey}' đã được đánh dấu là đã biết.`);
+        }
+
+        function getGlobalReviewQueue() {
+            const today = new Date();
+            today.setHours(23, 59, 59, 999);
+            let queue = [];
+            for (const wordKey in srsProgressData) {
+                const progress = srsProgressData[wordKey];
+                if (new Date(progress.nextReviewDate) <= today && progress.level < 99) {
+                    queue.push(wordKey);
+                }
+            }
+            return queue;
+        }
+
         function getTopicReviewQueue(categoryKey) {
             if (!categories[categoryKey]) return [];
             const topicWords = categories[categoryKey];
             return topicWords.filter(wordKey => srsProgressData.hasOwnProperty(wordKey) && srsProgressData[wordKey].level < 99);
         }
 
-        // --- DATA PERSISTENCE (Không thay đổi) ---
-        function saveSrsProgress() { /* ... */ }
-        function loadSrsProgress() { /* ... */ }
-        function saveLastSession() { /* ... */ }
-        function loadLastSession() { /* ... */ }
-        function clearLastSession() { /* ... */ }
+
+        // --- DATA PERSISTENCE (LocalStorage) ---
+        function saveSrsProgress() {
+            try {
+                localStorage.setItem(SRS_PROGRESS_KEY, JSON.stringify(srsProgressData));
+            } catch (e) {
+                console.error("Failed to save SRS progress:", e);
+                showErrorModal("Không thể lưu tiến trình học tập.");
+            }
+        }
+
+        function loadSrsProgress() {
+            const savedData = localStorage.getItem(SRS_PROGRESS_KEY);
+            if (savedData) {
+                try {
+                    srsProgressData = JSON.parse(savedData);
+                } catch (e) {
+                    srsProgressData = {};
+                }
+            }
+        }
+
+        function saveLastSession() {
+            const sessionData = {
+                mode: currentMode,
+                category: currentCategoryKey,
+                words: currentWords,
+                index: currentIndex
+            };
+            localStorage.setItem(LAST_SESSION_KEY, JSON.stringify(sessionData));
+        }
+
+        function loadLastSession() {
+            const savedSession = localStorage.getItem(LAST_SESSION_KEY);
+            if (savedSession) {
+                try {
+                    return JSON.parse(savedSession);
+                } catch (e) {
+                    return null;
+                }
+            }
+            return null;
+        }
+
+        function clearLastSession() {
+             localStorage.removeItem(LAST_SESSION_KEY);
+        }
         
         // --- UI RENDERING AND UPDATES ---
+        function updateControlVisibility() {
+            const hasMultipleWords = currentWords.length > 1;
+            const isLearnMode = currentMode === MODES.LEARN;
+            const isReviewMode = currentMode === MODES.TOPIC_REVIEW || currentMode === MODES.GLOBAL_REVIEW;
+            const isGlobalReviewMode = currentMode === MODES.GLOBAL_REVIEW;
 
-        function updateControlVisibility() { /* ... */ }
-        function updateReviewButtons() { /* ... */ }
+            ui.shuffleBtn.classList.toggle('hidden', !hasMultipleWords || !isLearnMode);
+            ui.topicProgressBtn.classList.toggle('hidden', isGlobalReviewMode);
+            ui.progressMatrixBtn.classList.remove('hidden');
+            ui.backToLearnBtn.classList.toggle('hidden', !isReviewMode);
 
-        // THAY ĐỔI 4: Hàm tạo dropdown mới
+            const actionGroup = document.getElementById('action-buttons-group');
+            const isAnyActionVisible = Array.from(actionGroup.children).some(child => !child.classList.contains('hidden'));
+            actionGroup.classList.toggle('hidden', !isAnyActionVisible);
+            actionGroup.classList.toggle('flex', isAnyActionVisible);
+
+            const showNavButtons = hasMultipleWords;
+            ui.cardPrevBtn.classList.toggle('hidden', !showNavButtons);
+            ui.cardNextBtn.classList.toggle('hidden', !showNavButtons);
+
+            updateReviewButtons();
+        }
+
+
+        function updateReviewButtons() {
+            const globalQueue = getGlobalReviewQueue();
+            ui.srsReviewBtn.querySelector('.font-bold').textContent = globalQueue.length;
+            ui.srsReviewBtn.disabled = globalQueue.length === 0;
+
+            const topicQueue = getTopicReviewQueue(currentCategoryKey);
+            ui.topicReviewBtn.querySelector('.font-bold').textContent = topicQueue.length;
+            ui.topicReviewBtn.disabled = topicQueue.length === 0;
+            ui.topicReviewBtn.classList.toggle('hidden', currentMode !== MODES.LEARN);
+            ui.topicReviewBtn.classList.toggle('flex', currentMode === MODES.LEARN);
+        }
+
         function createCategoryDropdown() {
             ui.categorySelect.innerHTML = '';
             let sortedKeys = Object.keys(categories).sort();
@@ -223,14 +410,13 @@
             });
         }
 
-        // THAY ĐỔI 5: Hàm bắt đầu phiên học mới
+
         function startSession(mode, categoryKey, customWordList = null) {
             currentMode = mode;
             currentCategoryKey = categoryKey;
             
             if (mode === MODES.LEARN) {
                 const allWordsInCategory = categories[categoryKey] || [];
-                // Lấy danh sách các từ chưa học trong chủ đề này
                 currentWords = allWordsInCategory.filter(word => !srsProgressData.hasOwnProperty(word));
                 currentIndex = 0;
             } else { 
@@ -253,7 +439,50 @@
             
             setTimeout(() => { 
                 if (currentWords.length === 0 || currentIndex >= currentWords.length) {
-                    // ... (Logic khi hết từ không thay đổi nhiều)
+                    ui.flashcardFront.innerHTML = '';
+                    ui.cardBackContent.innerHTML = '';
+                    ui.srsRatingGroup.classList.add('invisible', 'opacity-0');
+
+                    let message;
+                    if (currentMode === MODES.LEARN) {
+                        const allWordsInTopic = categories[currentCategoryKey] || [];
+                        const learnedWordsInTopicCount = allWordsInTopic.filter(word => srsProgressData.hasOwnProperty(word)).length;
+
+                        if (allWordsInTopic.length > 0 && allWordsInTopic.length === learnedWordsInTopicCount) {
+                            message = 'Chủ đề này đã học xong. Chọn "Ôn tập theo chủ đề" hoặc "Luyện tập ngày" để ôn lại.';
+                        } else if (allWordsInTopic.length === 0) {
+                            message = 'Chủ đề này chưa có từ nào.';
+                        } else {
+                            message = 'Chúc mừng! Bạn đã học hết từ mới trong chủ đề này.';
+                        }
+                    } else { // Review modes
+                        message = 'Chúc mừng! Bạn đã hoàn thành phiên ôn tập.';
+                    }
+
+                    let contentHTML = `<div class="text-center p-4">
+                        <p class="text-xl text-slate-500 mb-6">${message}</p>`;
+
+                    if (currentMode !== MODES.LEARN) {
+                        contentHTML += `<button id="review-again-btn" class="animated-button px-6 py-3 bg-blue-500 text-white rounded-xl flex items-center gap-2 mx-auto">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M8 3a5 5 0 1 0 4.546 2.914.5.5 0 0 1 .908-.417A6 6 0 1 1 8 2v1z"/><path d="M8 4.466V.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384L8.41 4.658A.25.25 0 0 1 8 4.466z"/></svg>
+                            Ôn tập lại
+                        </button>`;
+                    }
+                    contentHTML += `</div>`;
+                    ui.flashcardFront.innerHTML = contentHTML;
+
+                    const reviewAgainBtn = document.getElementById('review-again-btn');
+                    if (reviewAgainBtn) {
+                        reviewAgainBtn.addEventListener('click', () => {
+                            let queue;
+                            if(currentMode === MODES.GLOBAL_REVIEW) queue = getGlobalReviewQueue();
+                            else queue = getTopicReviewQueue(currentCategoryKey);
+                            startSession(currentMode, currentCategoryKey, queue);
+                        });
+                    }
+
+                    updateNavigation();
+                    updateControlVisibility();
                     return;
                 }
 
@@ -263,23 +492,77 @@
                 const wordKey = currentWords[currentIndex];
                 const cardData = findWordData(wordKey);
                 
-                if (!cardData) { /* ... */ return; }
+                if (!cardData) { 
+                    ui.flashcardFront.innerHTML = `<p class="text-xl text-red-500">Lỗi: Không tìm thấy dữ liệu từ.</p>`; 
+                    updateNavigation();
+                    return; 
+                }
 
                 const partsOfSpeech = [...new Set(cardData.meanings.map(m => m.type))].join(', ');
                 const phoneticText = cardData.phonetic ? `/${cardData.phonetic.replace(/\//g, '')}/` : '';
                 
-                ui.flashcardFront.innerHTML = `...`; // (Không thay đổi)
+                ui.flashcardFront.innerHTML = `
+                    <div id="card-front-content" class="text-center p-4">
+                         <div class="flex items-center justify-center gap-3">
+                            <h2 class="text-4xl md:text-5xl font-bold break-words text-slate-800">${wordKey}</h2>
+                            <button id="front-audio-btn" class="play-audio-btn text-blue-500">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path></svg>
+                            </button>
+                        </div>
+                        <p class="text-xl italic text-slate-500 mt-2">(${partsOfSpeech}) ${phoneticText}</p>
+                    </div>`;
                 
-                // ... (Code tạo mặt trước không thay đổi)
+                document.getElementById('front-audio-btn').addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    playAudio(wordKey, e.currentTarget);
+                });
+                
+                const backContentWrapper = document.createElement('div');
+                backContentWrapper.className = 'p-4 w-full';
 
-                // THAY ĐỔI 6: Thêm hiển thị "explanation" ở mặt sau
+                const headerDiv = document.createElement('div');
+                headerDiv.className = 'flex flex-col items-start gap-2 mb-4';
+                
+                const titleDiv = document.createElement('div');
+                titleDiv.className = 'flex items-baseline gap-2';
+                
+                const wordTitle = document.createElement('h3');
+                wordTitle.className = 'text-3xl font-bold text-sky-800';
+                wordTitle.textContent = wordKey;
+                
+                titleDiv.append(wordTitle);
+
+                const mainAudioBtn = document.createElement('button');
+                mainAudioBtn.className = 'play-audio-btn text-xl';
+                mainAudioBtn.dataset.textToSpeak = wordKey;
+                mainAudioBtn.title = 'Phát âm';
+                mainAudioBtn.innerHTML = speakerIconSVG;
+                mainAudioBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    playAudio(e.currentTarget.dataset.textToSpeak, e.currentTarget);
+                });
+
+                headerDiv.append(titleDiv, mainAudioBtn);
+                backContentWrapper.appendChild(headerDiv);
+
                 cardData.meanings.forEach((meaningData) => {
                     const meaningBlock = document.createElement('div');
                     meaningBlock.className = 'mb-5 p-4 bg-white rounded-xl border';
 
-                    // ... (Code tạo header của nghĩa không thay đổi)
+                    const meaningHeader = document.createElement('div');
+                    meaningHeader.className = 'flex items-center gap-3 mb-3';
                     
-                    // Thêm phần giải thích nếu có
+                    const typeBadge = document.createElement('span');
+                    typeBadge.className = 'text-xs font-semibold uppercase text-sky-600 bg-sky-100 px-2 py-1 rounded-full';
+                    typeBadge.textContent = meaningData.type;
+
+                    const meaningText = document.createElement('p');
+                    meaningText.className = 'text-lg font-semibold text-slate-800';
+                    meaningText.textContent = meaningData.meaning;
+
+                    meaningHeader.append(typeBadge, meaningText);
+                    meaningBlock.appendChild(meaningHeader);
+                    
                     if (meaningData.explanation) {
                         const explanationDiv = document.createElement('div');
                         explanationDiv.className = 'mt-2 mb-3 p-3 bg-gray-50 rounded-lg';
@@ -291,9 +574,39 @@
                     }
 
                     const exampleList = document.createElement('ul');
-                    // ... (Code tạo danh sách ví dụ không thay đổi)
+                    exampleList.className = 'space-y-3 list-inside';
 
-                    meaningBlock.append(exampleList);
+                    meaningData.examples.forEach((ex) => {
+                        const listItem = document.createElement('li');
+                        listItem.className = 'text-base';
+                        
+                        const englishLine = document.createElement('p');
+                        englishLine.className = 'text-slate-700';
+                        englishLine.textContent = `“${ex.en}” `;
+
+                        const exampleAudioBtn = document.createElement('button');
+                        exampleAudioBtn.className = 'play-audio-btn';
+                        exampleAudioBtn.dataset.textToSpeak = ex.en;
+                        exampleAudioBtn.title = 'Phát âm ví dụ';
+                        exampleAudioBtn.innerHTML = speakerIconSVG;
+                        exampleAudioBtn.addEventListener('click', (e) => {
+                           e.stopPropagation();
+                           playAudio(e.currentTarget.dataset.textToSpeak, e.currentTarget);
+                        });
+
+                        englishLine.appendChild(exampleAudioBtn);
+
+                        const vietnameseLine = document.createElement('p');
+                        vietnameseLine.className = 'text-sm text-slate-500 italic ml-4';
+                        vietnameseLine.textContent = `→ ${ex.vi}`;
+
+                        listItem.append(englishLine, vietnameseLine);
+                        exampleList.appendChild(listItem);
+                    });
+                    
+                    if (meaningData.examples.length > 0) {
+                        meaningBlock.appendChild(exampleList);
+                    }
                     backContentWrapper.appendChild(meaningBlock);
                 });
 
@@ -307,10 +620,23 @@
             }, 150);
         }
 
-        function showCardCounter() { /* ... */ }
-        function updateNavigation() { /* ... */ }
+        function showCardCounter() {
+            if (counterTimeout) {
+                clearTimeout(counterTimeout);
+            }
+            ui.cardCounter.classList.add('visible');
+            counterTimeout = setTimeout(() => {
+                ui.cardCounter.classList.remove('visible');
+            }, 1200);
+        }
 
-        // THAY ĐỔI 7: Cập nhật hàm thống kê
+        function updateNavigation() {
+            const hasWords = currentWords.length > 0;
+            const totalInQueue = currentWords.length;
+            const currentPosition = totalInQueue > 0 ? currentIndex + 1 : 0;
+            ui.cardCounter.textContent = `${currentPosition}/${totalInQueue}`;
+        }
+
         function updateProgressMatrixAndStats(categoryKey = null) {
             ui.progressGridContainer.innerHTML = '';
             
@@ -324,24 +650,252 @@
                 wordsToShow = Array.from(vocabularyMap.keys());
             }
             
-            // ... (Phần còn lại của hàm không thay đổi nhiều, chỉ cần dùng `wordsToShow` là mảng các key)
+            ui.progressModalTitle.textContent = title;
+            const counts = { unstudied: 0, hard: 0, good: 0, easy: 0, known: 0 };
+            const totalWords = wordsToShow.length;
+
+            wordsToShow.sort().forEach(wordKey => {
+                const dot = document.createElement('div');
+                let dotColorClass = 'bg-slate-300';
+                let dotTitle = `${wordKey}`;
+                const wordData = findWordData(wordKey);
+
+                if (srsProgressData.hasOwnProperty(wordKey)) {
+                    const progress = srsProgressData[wordKey];
+                    const level = progress.level;
+                    dotTitle += ` - Level: ${level}`;
+
+                    if (level >= 99) {
+                        dotColorClass = 'bg-purple-500';
+                        counts.known++;
+                    } else if (level <= 2) {
+                        dotColorClass = 'bg-red-500';
+                        counts.hard++;
+                    } else if (level <= 4) {
+                        dotColorClass = 'bg-blue-500';
+                        counts.good++;
+                    } else {
+                        dotColorClass = 'bg-green-500';
+                        counts.easy++;
+                    }
+                } else {
+                    counts.unstudied++;
+                }
+                
+                dot.className = `progress-dot w-4 h-4 rounded-sm ${dotColorClass}`;
+                dot.title = dotTitle;
+                dot.dataset.wordKey = wordKey;
+                dot.dataset.category = wordData.category;
+
+                dot.addEventListener('click', () => {
+                    const wordCategory = dot.dataset.category;
+                    const clickedWordKey = dot.dataset.wordKey;
+                    
+                    startSession(MODES.TOPIC_REVIEW, wordCategory, [clickedWordKey]);
+                    ui.progressMatrixModal.classList.add('hidden');
+                    unlockBodyScroll();
+                });
+
+                ui.progressGridContainer.appendChild(dot);
+            });
+
+            const calcPercent = (count) => totalWords > 0 ? ((count / totalWords) * 100).toFixed(0) : 0;
+            ui.statsUnstudiedCount.textContent = counts.unstudied;
+            ui.statsUnstudiedPercent.textContent = `${calcPercent(counts.unstudied)}%`;
+            ui.statsHardCount.textContent = counts.hard;
+            ui.statsHardPercent.textContent = `${calcPercent(counts.hard)}%`;
+            ui.statsGoodCount.textContent = counts.good;
+            ui.statsGoodPercent.textContent = `${calcPercent(counts.good)}%`;
+            ui.statsEasyCount.textContent = counts.easy;
+            ui.statsEasyPercent.textContent = `${calcPercent(counts.easy)}%`;
+            ui.statsKnownCount.textContent = counts.known;
+            ui.statsKnownPercent.textContent = `${calcPercent(counts.known)}%`;
         }
         
-        function playAudio(text, buttonEl) { /* ... */ }
+        function playAudio(text, buttonEl) {
+            if (!text || !speechSynth) return;
+            if (speechSynth.speaking) {
+                speechSynth.cancel();
+            }
 
-        // --- EVENT HANDLERS (Không thay đổi) ---
-        function handleSrsAnswer(rating) { /* ... */ }
-        function handleKnownAnswer() { /* ... */ }
-        function navigate(direction) { /* ... */ }
-        function shuffleCurrentQueue() { /* ... */ }
-        function resetAllProgress() { /* ... */ }
-        function showToast(message) { /* ... */ }
-        function showErrorModal(message, title = "Đã xảy ra lỗi") { /* ... */ }
-        function showConfirmModal(title, message, onConfirm) { /* ... */ }
-        function lockBodyScroll() { /* ... */ }
-        function unlockBodyScroll() { /* ... */ }
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.lang = 'en-US';
+
+            const preferredVoices = ['Siri', 'Samantha', 'Google US English', 'Alex', 'Daniel'];
+            let selectedVoice = null;
+
+            for (const voiceName of preferredVoices) {
+                selectedVoice = availableVoices.find(voice => voice.name.includes(voiceName) && voice.lang.startsWith('en-'));
+                if (selectedVoice) break;
+            }
+
+            if (!selectedVoice) {
+                selectedVoice = availableVoices.find(voice => voice.lang.startsWith('en-US') && voice.localService);
+            }
+            if (!selectedVoice) {
+                selectedVoice = availableVoices.find(voice => voice.lang.startsWith('en-US'));
+            }
+            if (selectedVoice) {
+                utterance.voice = selectedVoice;
+            }
+
+            let originalContent = null;
+            if (buttonEl) {
+                if(buttonEl.disabled) return;
+                originalContent = buttonEl.innerHTML;
+                buttonEl.innerHTML = loadingIconSVG;
+                buttonEl.disabled = true;
+            }
+
+            const cleanup = () => {
+                if (buttonEl) {
+                    buttonEl.innerHTML = originalContent;
+                    buttonEl.disabled = false;
+                }
+            };
+
+            utterance.onend = cleanup;
+            utterance.onerror = (e) => {
+                if (e.error === 'interrupted' || e.error === 'canceled') {
+                    cleanup();
+                    return;
+                }
+                console.error("SpeechSynthesis Error:", e);
+                showToast(`Lỗi phát âm: ${e.error}`);
+                cleanup();
+            };
+
+            speechSynth.speak( utterance );
+        }
+
+        // --- EVENT HANDLERS & USER ACTIONS ---
+        function handleSrsAnswer(rating) {
+            if (currentWords.length === 0) return;
+            
+            const wordKey = currentWords[currentIndex];
+            updateSrsProgress(wordKey, rating);
+            
+            currentWords.splice(currentIndex, 1);
+
+            if (currentIndex >= currentWords.length && currentWords.length > 0) {
+                currentIndex = currentWords.length - 1;
+            }
+            
+            displayCard();
+            updateNavigation();
+            updateReviewButtons();
+        }
+
+        function handleKnownAnswer() {
+            if (currentWords.length === 0) return;
+            const wordKey = currentWords[currentIndex];
+            markAsKnown(wordKey);
+            
+            currentWords.splice(currentIndex, 1);
+
+            if (currentIndex >= currentWords.length && currentWords.length > 0) {
+                currentIndex = currentWords.length - 1;
+            }
+
+            displayCard();
+            updateNavigation();
+            updateReviewButtons();
+        }
         
-        // THAY ĐỔI 8: Cập nhật hàm tải dữ liệu
+        function navigate(direction) {
+            if (currentWords.length > 1) {
+                let newIndex = currentIndex + direction;
+                if (newIndex >= currentWords.length) {
+                    newIndex = 0;
+                }
+                if (newIndex < 0) {
+                    newIndex = currentWords.length - 1;
+                }
+                currentIndex = newIndex;
+
+                displayCard();
+                showCardCounter();
+            }
+        }
+
+        function shuffleCurrentQueue() {
+            if (currentWords.length < 2) return;
+            for (let i = currentWords.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [currentWords[i], currentWords[j]] = [currentWords[j], currentWords[i]];
+            }
+            currentIndex = 0;
+            displayCard();
+            showToast("Đã xáo trộn danh sách từ!");
+        }
+
+        function resetAllProgress() {
+            showConfirmModal(
+                "Xác nhận xóa tiến trình",
+                "Bạn có chắc chắn muốn xóa toàn bộ tiến trình học tập không? Hành động này không thể hoàn tác.",
+                () => {
+                    srsProgressData = {};
+                    localStorage.removeItem(SRS_PROGRESS_KEY);
+                    clearLastSession();
+                    
+                    updateProgressMatrixAndStats(lastProgressViewCategory);
+                    updateReviewButtons();
+                    showToast("Đã xóa toàn bộ tiến trình học tập.");
+                    
+                    startSession(MODES.LEARN, currentCategoryKey);
+                }
+            );
+        }
+
+        function showToast(message) {
+            ui.toast.textContent = message;
+            ui.toast.classList.add('show');
+            setTimeout(() => {
+                ui.toast.classList.remove('show');
+            }, 2000);
+        }
+
+        function showErrorModal(message, title = "Đã xảy ra lỗi") { 
+            ui.errorTitle.textContent = title;
+            ui.errorMessage.textContent = message; 
+            ui.errorModal.classList.remove("hidden"); 
+            lockBodyScroll();
+        }
+
+        function showConfirmModal(title, message, onConfirm) {
+            ui.confirmTitle.textContent = title;
+            ui.confirmMessage.textContent = message;
+            ui.confirmModal.classList.remove('hidden');
+            lockBodyScroll();
+
+            const confirmHandler = () => {
+                onConfirm();
+                closeAndCleanup();
+            };
+
+            const cancelHandler = () => {
+                closeAndCleanup();
+            };
+            
+            const closeAndCleanup = () => {
+                ui.confirmModal.classList.add('hidden');
+                unlockBodyScroll();
+                ui.confirmBtn.removeEventListener('click', confirmHandler);
+                ui.cancelBtn.removeEventListener('click', cancelHandler);
+            };
+
+            ui.confirmBtn.addEventListener('click', confirmHandler);
+            ui.cancelBtn.addEventListener('click', cancelHandler);
+        }
+
+        function lockBodyScroll() {
+            document.body.classList.add('modal-open');
+        }
+
+        function unlockBodyScroll() {
+            document.body.classList.remove('modal-open');
+        }
+        
         async function loadVocabularyData(url) {
             try {
                 const response = await fetch(url);
@@ -350,14 +904,11 @@
                 }
                 const data = await response.json();
                 
-                // Xử lý dữ liệu phẳng thành các cấu trúc cần thiết
                 if (Array.isArray(data)) {
                     vocabularyList = data;
                     vocabularyList.forEach(wordData => {
-                        // Thêm vào Map để tra cứu
                         vocabularyMap.set(wordData.word, wordData);
                         
-                        // Phân loại vào các chủ đề
                         const category = wordData.category;
                         if (!categories[category]) {
                             categories[category] = [];
@@ -371,7 +922,11 @@
 
             } catch (error) {
                 console.error('Không thể tải dữ liệu từ vựng:', error);
-                // ... (Hiển thị lỗi)
+                ui.flashcardFront.innerHTML = `<div class="text-center p-4">
+                    <h2 class="text-2xl font-bold text-red-600 mb-2">Lỗi Tải Dữ Liệu</h2>
+                    <p class="text-slate-600">Không thể tải tệp từ vựng. Vui lòng đảm bảo tệp <strong>${url}</strong> tồn tại và có định dạng JSON chính xác.</p>
+                    <p class="text-xs text-slate-400 mt-4">Chi tiết lỗi: ${error.message}</p>
+                </div>`;
                 return null;
             }
         }
@@ -385,8 +940,97 @@
 
             createCategoryDropdown();
             
-            // --- Event Listeners (Không thay đổi) ---
+            document.addEventListener('keydown', (e) => {
+                if (['ArrowUp', 'ArrowDown', ' '].includes(e.key)) {
+                    e.preventDefault();
+                    ui.flashcard.click();
+                }
+                if (e.key === 'ArrowLeft') {
+                    navigate(-1);
+                } else if (e.key === 'ArrowRight') {
+                    navigate(1);
+                }
+            });
             
+            ui.cardPrevBtn.addEventListener('click', (e) => { e.stopPropagation(); navigate(-1); });
+            ui.cardNextBtn.addEventListener('click', (e) => { e.stopPropagation(); navigate(1); });
+
+            ui.flashcard.addEventListener('click', (e) => {
+                if (e.target.closest('.play-audio-btn, #review-again-btn, .card-nav-btn, .srs-icon-btn, #front-audio-btn')) {
+                    return;
+                }
+                if (currentWords.length > 0 && currentIndex < currentWords.length) {
+                    ui.flashcard.classList.toggle('is-flipped');
+                }
+            });
+
+            ui.srsReviewBtn.addEventListener('click', () => {
+                let reviewQueue = getGlobalReviewQueue();
+                if (reviewQueue.length > 0) {
+                    startSession(MODES.GLOBAL_REVIEW, "GLOBAL_REVIEW_MODE", reviewQueue);
+                }
+            });
+
+            ui.topicReviewBtn.addEventListener('click', () => {
+                let reviewQueue = getTopicReviewQueue(currentCategoryKey);
+                if (reviewQueue.length > 0) {
+                    startSession(MODES.TOPIC_REVIEW, currentCategoryKey, reviewQueue);
+                }
+            });
+            
+            ui.backToLearnBtn.addEventListener('click', () => {
+                startSession(MODES.LEARN, currentCategoryKey);
+            });
+
+            ui.closeErrorModalBtn.addEventListener('click', () => {
+                ui.errorModal.classList.add('hidden');
+                unlockBodyScroll();
+            });
+            
+            ui.progressMatrixBtn.addEventListener('click', () => {
+                lastProgressViewCategory = null;
+                updateProgressMatrixAndStats();
+                ui.progressMatrixModal.classList.remove('hidden');
+                lockBodyScroll();
+            });
+            ui.topicProgressBtn.addEventListener('click', () => {
+                lastProgressViewCategory = currentCategoryKey;
+                updateProgressMatrixAndStats(currentCategoryKey);
+                ui.progressMatrixModal.classList.remove('hidden');
+                lockBodyScroll();
+            });
+            ui.closeProgressMatrixBtn.addEventListener('click', () => {
+                ui.progressMatrixModal.classList.add('hidden');
+                unlockBodyScroll();
+            });
+            ui.progressMatrixModal.addEventListener('click', (e) => {
+                if (e.target === ui.progressMatrixModal) {
+                    ui.progressMatrixModal.classList.add('hidden');
+                    unlockBodyScroll();
+                }
+            });
+
+            ui.shuffleBtn.addEventListener('click', shuffleCurrentQueue);
+            ui.resetProgressBtn.addEventListener('click', resetAllProgress);
+
+            ui.srsRatingGroup.addEventListener('click', (e) => {
+                const button = e.target.closest('.srs-icon-btn');
+                if (!button) return;
+                
+                e.stopPropagation();
+
+                if (button.classList.contains('srs-rating-btn')) {
+                    handleSrsAnswer(button.dataset.rating);
+                } else if (button.id === 'known-btn') {
+                    handleKnownAnswer();
+                }
+            });
+            
+            ui.categorySelect.addEventListener('change', (e) => {
+                const selectedKey = e.target.value;
+                startSession(MODES.LEARN, selectedKey);
+            });
+
             if (firstCategory) {
                 startSession(MODES.LEARN, firstCategory);
             } else {
@@ -409,11 +1053,51 @@
             }
         }
         
-        function loadVoices() { /* ... */ }
-        function handleFirstInteraction() { /* ... */ }
+        function loadVoices() {
+            if (voicesLoaded) return;
+            try {
+                availableVoices = speechSynthesis.getVoices();
+                if (availableVoices.length > 0) {
+                    voicesLoaded = true;
+                }
+            } catch (e) {
+                console.error("Could not load voices:", e);
+            }
+        }
 
-        // --- APP START (Không thay đổi) ---
-        document.addEventListener('DOMContentLoaded', () => { /* ... */ });
+        function handleFirstInteraction() {
+            userHasInteracted = true;
+            if (currentWords.length > 0 && currentIndex < currentWords.length) {
+                playAudio(currentWords[currentIndex], null);
+            }
+        }
+
+        // --- APP START ---
+        document.addEventListener('DOMContentLoaded', () => {
+            document.addEventListener('touchmove', function (event) {
+                if (event.scale !== 1 && event.scale !== undefined) { 
+                    event.preventDefault(); 
+                }
+            }, { passive: false });
+
+            let lastTouchEnd = 0;
+            document.addEventListener('touchend', function (event) {
+                const now = (new Date()).getTime();
+                if (now - lastTouchEnd <= 300) {
+                    event.preventDefault();
+                }
+                lastTouchEnd = now;
+            }, false);
+
+            document.addEventListener('click', handleFirstInteraction, { once: true });
+            document.addEventListener('keydown', handleFirstInteraction, { once: true });
+
+            loadVoices();
+            if (speechSynthesis.onvoiceschanged !== undefined) {
+                speechSynthesis.onvoiceschanged = loadVoices;
+            }
+            startApp();
+        });
     </script>
 </body>
 </html>
