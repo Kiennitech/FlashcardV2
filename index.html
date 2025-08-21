@@ -472,7 +472,6 @@
             
             if (mode === MODES.LEARN) {
                 const allWordsInCategory = vocabularyData[categoryKey] ? Object.keys(vocabularyData[categoryKey]) : [];
-                // SỬA LỖI: Luôn lọc lại danh sách để chỉ hiển thị các từ chưa học.
                 currentWords = allWordsInCategory.filter(word => !srsProgressData.hasOwnProperty(word));
                 currentIndex = 0;
             } else { 
@@ -501,15 +500,19 @@
 
                     let message;
                     if (currentMode === MODES.LEARN) {
-                        message = 'Chúc mừng! Bạn đã học hết từ mới trong chủ đề này.';
-                    } else {
+                        const allWordsInTopic = vocabularyData[currentCategoryKey] ? Object.keys(vocabularyData[currentCategoryKey]) : [];
+                        const learnedWordsInTopicCount = allWordsInTopic.filter(word => srsProgressData.hasOwnProperty(word)).length;
+
+                        if (allWordsInTopic.length > 0 && allWordsInTopic.length === learnedWordsInTopicCount) {
+                            message = 'Chủ đề này đã học xong. Chọn "Ôn tập theo chủ đề" hoặc "Luyện tập ngày" để ôn lại.';
+                        } else if (allWordsInTopic.length === 0) {
+                            message = 'Chủ đề này chưa có từ nào.';
+                        } else {
+                            message = 'Chúc mừng! Bạn đã học hết từ mới trong chủ đề này.';
+                        }
+                    } else { // Review modes
                         message = 'Chúc mừng! Bạn đã hoàn thành phiên ôn tập.';
                     }
-                    
-                    if (currentMode !== MODES.LEARN && getGlobalReviewQueue().length === 0 && getTopicReviewQueue(currentCategoryKey).length === 0) {
-                        message = 'Không có từ nào cần ôn tập.';
-                    }
-
 
                     let contentHTML = `<div class="text-center p-4">
                         <p class="text-xl text-slate-500 mb-6">${message}</p>`;
