@@ -7,7 +7,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display.swap" rel="stylesheet">
     <style>
         html, body { height: 100%; overflow-x: hidden; }
         body { 
@@ -15,10 +15,15 @@
             background-color: #f1f5f9; 
             padding-top: 1rem; 
             padding-bottom: 1rem;
-            /* SỬA LỖI IOS: Ngăn chặn double-tap-to-zoom một cách hiệu quả */
             touch-action: manipulation;
         }
-        body.modal-open { overflow: hidden; }
+        /* SỬA LỖI: CSS để khóa cuộn nền khi modal mở */
+        body.modal-open { 
+            overflow: hidden;
+            position: fixed;
+            width: 100%;
+            height: 100%;
+        }
         button, .animated-button, .srs-icon-btn, .card-nav-btn { -webkit-tap-highlight-color: transparent; }
         .flashcard-container { perspective: 1200px; }
         .flashcard { width: 100%; height: 100%; position: relative; transform-style: preserve-3d; transition: transform 0.7s cubic-bezier(0.4, 0.0, 0.2, 1); cursor: pointer; }
@@ -31,13 +36,11 @@
             transform: rotateY(-180deg); 
             overflow-y: auto; 
             justify-content: flex-start;
-            /* SỬA LỖI IOS: Bật chế độ cuộn mượt mà (momentum scrolling) */
             -webkit-overflow-scrolling: touch;
         }
         .animated-button { 
             transition: all 0.2s cubic-bezier(0.4, 0.0, 0.2, 1); 
             box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
-            /* SỬA LỖI IOS: Báo cho trình duyệt biết thuộc tính này sẽ thay đổi để tối ưu hóa */
             will-change: transform;
         }
         .animated-button:hover { transform: translateY(-2px); box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1); }
@@ -68,7 +71,6 @@
             transition: background-color 0.2s, color 0.2s;
         }
         #topic-list-container {
-            /* SỬA LỖI IOS: Bật chế độ cuộn mượt mà (momentum scrolling) */
             -webkit-overflow-scrolling: touch;
         }
     </style>
@@ -152,7 +154,6 @@
                         <span class="text-xs font-normal opacity-80">(<span class="font-bold">0</span>)</span>
                     </button>
                 </div>
-                <!-- Nâng cấp: Thay thế dropdown bằng button -->
                 <div class="relative w-full">
                     <button id="open-topic-modal-btn" class="w-full p-2.5 text-sm font-medium text-slate-700 bg-white border border-slate-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer flex justify-between items-center text-left">
                         <span id="current-topic-display">Chọn một chủ đề...</span>
@@ -163,7 +164,6 @@
         </footer>
     </div>
     
-    <!-- Nâng cấp: Thêm Modal chọn chủ đề -->
     <div id="topic-select-modal" class="modal hidden fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center p-4 z-50">
         <div class="bg-white rounded-2xl shadow-xl p-6 max-w-lg w-full max-h-[80vh] flex flex-col">
             <div class="flex justify-between items-center mb-4">
@@ -175,7 +175,6 @@
                 <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
             </div>
             <div id="topic-list-container" class="overflow-y-auto -mr-2 pr-2 space-y-2">
-                <!-- Danh sách chủ đề sẽ được render ở đây -->
             </div>
         </div>
     </div>
@@ -248,6 +247,7 @@
         let counterTimeout = null;
         let lastProgressViewCategory = null; 
         let userHasInteracted = false;
+        let savedScrollY = 0; // Thêm biến để lưu vị trí cuộn
 
         const ui = {
             flashcard: document.getElementById('flashcard'),
@@ -327,7 +327,7 @@
                 level: currentLevel,
                 nextReviewDate: nextReviewDate.toISOString()
             };
-            saveSrsProgress();
+            // saveSrsProgress(); // Không cần lưu ở đây, sẽ lưu khi thoát
         }
 
         function markAsKnown(wordKey) {
@@ -337,7 +337,6 @@
                 level: 99,
                 nextReviewDate: farFutureDate.toISOString()
             };
-            saveSrsProgress();
             showToast(`'${wordKey}' đã được đánh dấu là đã biết.`);
         }
 
@@ -390,6 +389,7 @@
                 index: currentIndex
             };
             localStorage.setItem(LAST_SESSION_KEY, JSON.stringify(sessionData));
+            saveSrsProgress(); // Lưu cả tiến trình SRS khi thoát
         }
 
         function loadLastSession() {
@@ -656,10 +656,8 @@
                         const englishLine = document.createElement('p');
                         englishLine.className = 'text-slate-700';
                         
-                        // KHẮC PHỤC: Tạo regex thông minh hơn để nhận diện biến thể
                         let stem = wordKey.toLowerCase();
                         let regex;
-                        // Xử lý các trường hợp đặc biệt như 'provide' -> 'provid'
                         if (stem.endsWith('e')) {
                             stem = stem.slice(0, -1);
                             regex = new RegExp(`\\b(${stem}(e|es|ed|ing)?)\\b`, 'gi');
@@ -974,12 +972,17 @@
             ui.cancelBtn.addEventListener('click', cancelHandler);
         }
 
+        // SỬA LỖI: Cập nhật hàm khóa cuộn
         function lockBodyScroll() {
+            savedScrollY = window.scrollY;
+            document.body.style.top = `-${savedScrollY}px`;
             document.body.classList.add('modal-open');
         }
 
         function unlockBodyScroll() {
             document.body.classList.remove('modal-open');
+            document.body.style.top = '';
+            window.scrollTo(0, savedScrollY);
         }
         
         async function loadVocabularyData(url) {
@@ -1018,11 +1021,20 @@
         }
 
         // --- INITIALIZATION ---
-        function initializeApp() {
+        function initializeApp(sessionToRestore = null) {
             loadSrsProgress();
             
             const firstCategory = Object.keys(categories)[0] || null;
-            currentCategoryKey = firstCategory;
+            
+            // Khôi phục session hoặc bắt đầu mới
+            if (sessionToRestore) {
+                currentMode = sessionToRestore.mode;
+                currentCategoryKey = sessionToRestore.category;
+                currentWords = sessionToRestore.words;
+                currentIndex = sessionToRestore.index;
+            } else {
+                currentCategoryKey = firstCategory;
+            }
 
             renderTopicsInModal();
             
@@ -1135,7 +1147,12 @@
             });
 
 
-            if (firstCategory) {
+            if (sessionToRestore) {
+                const count = categories[currentCategoryKey] ? categories[currentCategoryKey].length : 0;
+                ui.currentTopicDisplay.textContent = `${currentCategoryKey} (${count})`;
+                displayCard();
+                updateControlVisibility();
+            } else if (firstCategory) {
                 startSession(MODES.LEARN, firstCategory);
             } else {
                  ui.flashcardFront.innerHTML = `<p class="text-xl text-slate-500">Không có dữ liệu từ vựng nào.</p>`;
@@ -1148,11 +1165,23 @@
             const success = await loadVocabularyData(dataUrl);
 
             if (success) {
-                try {
+                const lastSession = loadLastSession();
+                if (lastSession && lastSession.words && lastSession.words.length > 0) {
+                    showConfirmModal(
+                        "Khôi phục phiên học?",
+                        `Bạn có muốn tiếp tục học chủ đề "${lastSession.category}" từ vị trí đã dừng lại không?`,
+                        () => {
+                            initializeApp(lastSession);
+                            clearLastSession();
+                            showToast("Đã khôi phục phiên học trước.");
+                        },
+                        () => {
+                            initializeApp();
+                            clearLastSession();
+                        }
+                    );
+                } else {
                     initializeApp();
-                } catch (error) {
-                    console.error('Không thể khởi tạo ứng dụng với dữ liệu:', error);
-                    showErrorModal(`${error.message}.`, "Lỗi khởi tạo dữ liệu");
                 }
             }
         }
@@ -1178,6 +1207,8 @@
 
         // --- APP START ---
         document.addEventListener('DOMContentLoaded', () => {
+            window.addEventListener('beforeunload', saveLastSession);
+
             document.addEventListener('click', handleFirstInteraction, { once: true });
             document.addEventListener('keydown', handleFirstInteraction, { once: true });
 
