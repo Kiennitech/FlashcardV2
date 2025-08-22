@@ -655,7 +655,11 @@
                         
                         const englishLine = document.createElement('p');
                         englishLine.className = 'text-slate-700';
-                        englishLine.textContent = `“${ex.en}” `;
+                        
+                        // THAY ĐỔI: In đậm từ vựng trong ví dụ
+                        const regex = new RegExp(`\\b(${wordKey})\\b`, 'gi');
+                        const highlightedHTML = ex.en.replace(regex, `<strong class="text-blue-600 font-bold">$1</strong>`);
+                        englishLine.innerHTML = `“${highlightedHTML}” `;
 
                         const exampleAudioBtn = document.createElement('button');
                         exampleAudioBtn.className = 'play-audio-btn';
@@ -1165,13 +1169,6 @@
 
         // --- APP START ---
         document.addEventListener('DOMContentLoaded', () => {
-            // SỬA LỖI IOS: Xóa các đoạn mã gây lag
-            /*
-            document.addEventListener('touchmove', function (event) { ... });
-            let lastTouchEnd = 0;
-            document.addEventListener('touchend', function (event) { ... });
-            */
-
             document.addEventListener('click', handleFirstInteraction, { once: true });
             document.addEventListener('keydown', handleFirstInteraction, { once: true });
 
