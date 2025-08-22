@@ -7,7 +7,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display.swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         html, body { height: 100%; overflow-x: hidden; }
         body { 
@@ -17,7 +17,6 @@
             padding-bottom: 1rem;
             touch-action: manipulation;
         }
-        /* SỬA LỖI: CSS để khóa cuộn nền khi modal mở */
         body.modal-open { 
             overflow: hidden;
             position: fixed;
@@ -26,7 +25,14 @@
         }
         button, .animated-button, .srs-icon-btn, .card-nav-btn { -webkit-tap-highlight-color: transparent; }
         .flashcard-container { perspective: 1200px; }
-        .flashcard { width: 100%; height: 100%; position: relative; transform-style: preserve-3d; transition: transform 0.7s cubic-bezier(0.4, 0.0, 0.2, 1); cursor: pointer; }
+        .flashcard { 
+            width: 100%; 
+            height: 100%; 
+            position: relative; 
+            transform-style: preserve-3d; 
+            transition: transform 0.7s cubic-bezier(0.4, 0.0, 0.2, 1);
+            cursor: pointer; 
+        }
         .flashcard.is-flipped { transform: rotateY(-180deg); }
         .flashcard-face { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; -webkit-backface-visibility: hidden; display: flex; flex-direction: column; justify-content: center; align-items: center; border-radius: 1.5rem; box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.07), 0 4px 6px -4px rgb(0 0 0 / 0.1); padding: 1.5rem; border: 1px solid rgba(0,0,0,0.05); }
         .flashcard-front { background-color: white; color: #111827; }
@@ -247,7 +253,7 @@
         let counterTimeout = null;
         let lastProgressViewCategory = null; 
         let userHasInteracted = false;
-        let savedScrollY = 0; // Thêm biến để lưu vị trí cuộn
+        let savedScrollY = 0;
 
         const ui = {
             flashcard: document.getElementById('flashcard'),
@@ -327,7 +333,6 @@
                 level: currentLevel,
                 nextReviewDate: nextReviewDate.toISOString()
             };
-            // saveSrsProgress(); // Không cần lưu ở đây, sẽ lưu khi thoát
         }
 
         function markAsKnown(wordKey) {
@@ -382,14 +387,18 @@
         }
 
         function saveLastSession() {
-            const sessionData = {
-                mode: currentMode,
-                category: currentCategoryKey,
-                words: currentWords,
-                index: currentIndex
-            };
-            localStorage.setItem(LAST_SESSION_KEY, JSON.stringify(sessionData));
-            saveSrsProgress(); // Lưu cả tiến trình SRS khi thoát
+            if (currentWords.length > 0) {
+                const sessionData = {
+                    mode: currentMode,
+                    category: currentCategoryKey,
+                    words: currentWords,
+                    index: currentIndex
+                };
+                localStorage.setItem(LAST_SESSION_KEY, JSON.stringify(sessionData));
+            } else {
+                clearLastSession();
+            }
+            saveSrsProgress();
         }
 
         function loadLastSession() {
@@ -476,6 +485,7 @@
 
                 item.addEventListener('click', () => {
                     const selectedKey = item.dataset.categoryKey;
+                    clearLastSession();
                     startSession(MODES.LEARN, selectedKey);
                     ui.topicSelectModal.classList.add('hidden');
                     unlockBodyScroll();
@@ -658,11 +668,20 @@
                         
                         let stem = wordKey.toLowerCase();
                         let regex;
-                        if (stem.endsWith('e')) {
-                            stem = stem.slice(0, -1);
-                            regex = new RegExp(`\\b(${stem}(e|es|ed|ing)?)\\b`, 'gi');
+                        
+                        if (stem.includes(' ')) {
+                            const parts = stem.split(' ');
+                            let mainVerb = parts[0];
+                            const particle = parts.slice(1).join(' ');
+                            if (mainVerb.endsWith('e')) {
+                                mainVerb = mainVerb.slice(0, -1);
+                            }
+                            regex = new RegExp(`\\b(${mainVerb}(e|es|ed|ing)?\\s+${particle})\\b`, 'gi');
                         } else {
-                            regex = new RegExp(`\\b(${stem}(s|es|ed|ing)?)\\b`, 'gi');
+                            if (stem.endsWith('e')) {
+                                stem = stem.slice(0, -1);
+                            }
+                            regex = new RegExp(`\\b(${stem}(e|es|ed|ing)?)\\b`, 'gi');
                         }
                         
                         const highlightedHTML = ex.en.replace(regex, `<strong class="text-blue-600 font-bold">$1</strong>`);
@@ -946,7 +965,7 @@
             lockBodyScroll();
         }
 
-        function showConfirmModal(title, message, onConfirm) {
+        function showConfirmModal(title, message, onConfirm, onCancel = () => {}) {
             ui.confirmTitle.textContent = title;
             ui.confirmMessage.textContent = message;
             ui.confirmModal.classList.remove('hidden');
@@ -958,6 +977,7 @@
             };
 
             const cancelHandler = () => {
+                onCancel();
                 closeAndCleanup();
             };
             
@@ -972,7 +992,6 @@
             ui.cancelBtn.addEventListener('click', cancelHandler);
         }
 
-        // SỬA LỖI: Cập nhật hàm khóa cuộn
         function lockBodyScroll() {
             savedScrollY = window.scrollY;
             document.body.style.top = `-${savedScrollY}px`;
@@ -1026,7 +1045,6 @@
             
             const firstCategory = Object.keys(categories)[0] || null;
             
-            // Khôi phục session hoặc bắt đầu mới
             if (sessionToRestore) {
                 currentMode = sessionToRestore.mode;
                 currentCategoryKey = sessionToRestore.category;
@@ -1172,12 +1190,11 @@
                         `Bạn có muốn tiếp tục học chủ đề "${lastSession.category}" từ vị trí đã dừng lại không?`,
                         () => {
                             initializeApp(lastSession);
-                            clearLastSession();
                             showToast("Đã khôi phục phiên học trước.");
                         },
                         () => {
-                            initializeApp();
                             clearLastSession();
+                            initializeApp();
                         }
                     );
                 } else {
