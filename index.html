@@ -656,8 +656,17 @@
                         const englishLine = document.createElement('p');
                         englishLine.className = 'text-slate-700';
                         
-                        // THAY ĐỔI: In đậm từ vựng trong ví dụ
-                        const regex = new RegExp(`\\b(${wordKey})\\b`, 'gi');
+                        // KHẮC PHỤC: Tạo regex thông minh hơn để nhận diện biến thể
+                        let stem = wordKey.toLowerCase();
+                        let regex;
+                        // Xử lý các trường hợp đặc biệt như 'provide' -> 'provid'
+                        if (stem.endsWith('e')) {
+                            stem = stem.slice(0, -1);
+                            regex = new RegExp(`\\b(${stem}(e|es|ed|ing)?)\\b`, 'gi');
+                        } else {
+                            regex = new RegExp(`\\b(${stem}(s|es|ed|ing)?)\\b`, 'gi');
+                        }
+                        
                         const highlightedHTML = ex.en.replace(regex, `<strong class="text-blue-600 font-bold">$1</strong>`);
                         englishLine.innerHTML = `“${highlightedHTML}” `;
 
