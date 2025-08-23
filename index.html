@@ -333,6 +333,7 @@
                 level: currentLevel,
                 nextReviewDate: nextReviewDate.toISOString()
             };
+            saveSrsProgress(); // Sửa lỗi: Lưu ngay lập tức
         }
 
         function markAsKnown(wordKey) {
@@ -342,6 +343,7 @@
                 level: 99,
                 nextReviewDate: farFutureDate.toISOString()
             };
+            saveSrsProgress(); // Sửa lỗi: Lưu ngay lập tức
             showToast(`'${wordKey}' đã được đánh dấu là đã biết.`);
         }
 
@@ -398,7 +400,6 @@
             } else {
                 clearLastSession();
             }
-            saveSrsProgress();
         }
 
         function loadLastSession() {
