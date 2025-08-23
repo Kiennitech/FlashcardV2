@@ -333,7 +333,7 @@
                 level: currentLevel,
                 nextReviewDate: nextReviewDate.toISOString()
             };
-            saveSrsProgress(); // Sửa lỗi: Lưu ngay lập tức
+            saveSrsProgress();
         }
 
         function markAsKnown(wordKey) {
@@ -343,7 +343,7 @@
                 level: 99,
                 nextReviewDate: farFutureDate.toISOString()
             };
-            saveSrsProgress(); // Sửa lỗi: Lưu ngay lập tức
+            saveSrsProgress();
             showToast(`'${wordKey}' đã được đánh dấu là đã biết.`);
         }
 
@@ -509,8 +509,16 @@
                 currentIndex = 0;
             }
             
-            const count = categories[categoryKey] ? categories[categoryKey].length : 0;
-            ui.currentTopicDisplay.textContent = `${categoryKey} (${count})`;
+            let displayText = categoryKey;
+            if (mode === MODES.GLOBAL_REVIEW) {
+                displayText = "Ôn tập tổng hợp";
+            } else if (mode === MODES.TOPIC_REVIEW) {
+                displayText = `Ôn tập: ${categoryKey}`;
+            } else {
+                 const count = categories[categoryKey] ? categories[categoryKey].length : 0;
+                 displayText = `${categoryKey} (${count})`;
+            }
+            ui.currentTopicDisplay.textContent = displayText;
             
             updateControlVisibility();
             displayCard();
@@ -1168,7 +1176,12 @@
 
             if (sessionToRestore) {
                 const count = categories[currentCategoryKey] ? categories[currentCategoryKey].length : 0;
-                ui.currentTopicDisplay.textContent = `${currentCategoryKey} (${count})`;
+                let displayText = currentCategoryKey;
+                if (sessionToRestore.mode === MODES.GLOBAL_REVIEW) displayText = "Ôn tập tổng hợp";
+                else if (sessionToRestore.mode === MODES.TOPIC_REVIEW) displayText = `Ôn tập: ${currentCategoryKey}`;
+                else displayText = `${currentCategoryKey} (${count})`;
+                ui.currentTopicDisplay.textContent = displayText;
+
                 displayCard();
                 updateControlVisibility();
             } else if (firstCategory) {
@@ -1225,7 +1238,12 @@
 
         // --- APP START ---
         document.addEventListener('DOMContentLoaded', () => {
-            window.addEventListener('beforeunload', saveLastSession);
+            // Sửa lỗi: Dùng visibilitychange thay cho beforeunload
+            document.addEventListener('visibilitychange', () => {
+                if (document.visibilityState === 'hidden') {
+                    saveLastSession();
+                }
+            });
 
             document.addEventListener('click', handleFirstInteraction, { once: true });
             document.addEventListener('keydown', handleFirstInteraction, { once: true });
